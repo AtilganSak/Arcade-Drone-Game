@@ -1,0 +1,8 @@
+
+Unity_ADG/Library
+Unity_ADG/Temp
+Unity_ADG/UserSettings
+Unity_ADG/Assembly-CSharp
+Unity_ADG/obj
+*.sln
+*.csproj
