@@ -4,5 +4,6 @@ Unity_ADG/Temp
 Unity_ADG/UserSettings
 Unity_ADG/Assembly-CSharp
 Unity_ADG/obj
+Unity_ADG/.vs
 *.sln
 *.csproj
