@@ -15,7 +15,7 @@ public class DroneController : MonoBehaviour
     public float blendSpeed = 2;
 
     public bool rawInput;
-
+    public ForceMode forceMode;
     public LayerMask ground;
 
     //True drone speed.
@@ -23,6 +23,8 @@ public class DroneController : MonoBehaviour
     //The drone's height from the ground.
     public float Altitude { get; private set; }
 
+    public Transform myTransform { get; private set; }
+    
     float ThrustInput;
     float TiltInput;
     float LiftInput; 
@@ -34,7 +36,6 @@ public class DroneController : MonoBehaviour
     Quaternion rotation;
     Rigidbody rigidbody;
     Animator anim;
-    Transform myTransform;
     RaycastHit raycastHit;
     Vector3 upAngle;
 
@@ -54,13 +55,15 @@ public class DroneController : MonoBehaviour
 
         SetAnimation();
 
-        Move();
-
-        Rotation();
-
         CalculateAltitude();
 
         CalculateSpeed();
+    }
+    private void FixedUpdate()
+    {
+        Move();
+
+        Rotation();
     }
 
     void GetInputs()
@@ -91,15 +94,13 @@ public class DroneController : MonoBehaviour
     }
     void Move()
     {
-        rigidbody.AddRelativeForce(TiltInput * movement * Time.deltaTime, LiftInput * lift * Time.deltaTime, ThrustInput * movement * Time.deltaTime);
+        rigidbody.AddRelativeForce(TiltInput * movement * Time.fixedDeltaTime, LiftInput * lift * Time.fixedDeltaTime, ThrustInput * movement * Time.fixedDeltaTime, forceMode);
     }
     void Rotation()
     {
         upAngle.y = RotateInput;
-
-        rotation = myTransform.localRotation * Quaternion.Euler(upAngle);
-
-        myTransform.localRotation = Quaternion.Slerp(myTransform.localRotation, rotation, Time.deltaTime * rotationSpeed);
+        upAngle = upAngle.normalized * rotationSpeed * Time.fixedDeltaTime;
+        rigidbody.MoveRotation(rigidbody.rotation * Quaternion.Euler(upAngle));
     }
     void CalculateAltitude()
     {
@@ -114,6 +115,9 @@ public class DroneController : MonoBehaviour
     }
     void Debug()
     {
+        Lebug.Log("Speed", Speed, "Drone");
+        Lebug.Log("Altitude", Altitude, "Drone");
+
         Lebug.Log("Lift", LiftInput, "Drone");
         Lebug.Log("Rotate", RotateInput, "Drone");
         Lebug.Log("Vertical", ThrustInput, "Drone");
