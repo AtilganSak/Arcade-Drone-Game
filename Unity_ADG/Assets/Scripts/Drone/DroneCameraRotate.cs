@@ -25,6 +25,7 @@ public class DroneCameraRotate : MonoBehaviour
     Vector3 deltaPosition;
 
     bool moving;
+    bool dontCheckLimits;
     public bool canReturnBack;
 
     float targetX;
@@ -60,16 +61,19 @@ public class DroneCameraRotate : MonoBehaviour
     {
         Lebug.Log("Mouse Position", Input.mousePosition);
 
-#if UNITY_STANDALONE
+#if UNITY_STANDALONE || UNITY_EDITOR
         if (Input.GetMouseButtonDown(0))
         {
             firstPosition = Input.mousePosition;
+            deltaPosition = Vector3.zero;
             if (firstPosition.x < xMin || firstPosition.x > xMax || firstPosition.y < yMin || firstPosition.y > yMax)
             {
                 return;
             }
-
-            deltaPosition = Vector3.zero;
+            else
+            {
+                dontCheckLimits = true;
+            }
 
             counter = 0;
             moving = true;
@@ -77,14 +81,17 @@ public class DroneCameraRotate : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
-            if (firstPosition.x < xMin || firstPosition.x > xMax || firstPosition.y < yMin || firstPosition.y > yMax)
-            {
-                return;
-            }
-
             deltaPosition = firstPosition - Input.mousePosition;
 
             firstPosition = Input.mousePosition;
+
+            if (!dontCheckLimits)
+            {
+                if (Input.mousePosition.x < xMin || Input.mousePosition.x > xMax || Input.mousePosition.y < yMin || Input.mousePosition.y > yMax)
+                {
+                    return;
+                }
+            }
 
             targetY = cinemachineFree.m_YAxis.Value + deltaPosition.normalized.y;
             targetX = cinemachineFree.m_XAxis.Value - deltaPosition.x;
@@ -96,20 +103,25 @@ public class DroneCameraRotate : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             moving = false;
+            dontCheckLimits = false;
         }
 #endif
-#if UNITY_ANDROID
+#if UNITY_ANDROIDs
         if (Input.touchCount > 0)
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
                 firstPosition = Input.mousePosition;
+                deltaPosition = Vector3.zero;
+                
                 if (firstPosition.x < xMin || firstPosition.x > xMax || firstPosition.y < yMin || firstPosition.y > yMax)
                 {
                     return;
                 }
-
-                deltaPosition = Vector3.zero;
+                else
+                {
+                    dontCheckLimits = true;
+                }
 
                 counter = 0;
                 moving = true;
@@ -117,14 +129,17 @@ public class DroneCameraRotate : MonoBehaviour
             }
             if (Input.GetTouch(0).phase == TouchPhase.Moved)
             {
-                if (firstPosition.x < xMin || firstPosition.x > xMax || firstPosition.y < yMin || firstPosition.y > yMax)
-                {
-                    return;
-                }
-
                 deltaPosition = firstPosition - Input.mousePosition;
 
                 firstPosition = Input.mousePosition;
+
+                if (!dontCheckLimits)
+                {
+                    if (Input.mousePosition.x < xMin || Input.mousePosition.x > xMax || Input.mousePosition.y < yMin || Input.mousePosition.y > yMax)
+                    {
+                        return;
+                    }
+                }
 
                 targetY = cinemachineFree.m_YAxis.Value + deltaPosition.normalized.y;
                 targetX = cinemachineFree.m_XAxis.Value - deltaPosition.x;
@@ -136,6 +151,7 @@ public class DroneCameraRotate : MonoBehaviour
             if (Input.GetTouch(0).phase == TouchPhase.Ended)
             {
                 moving = false;
+                dontCheckLimits = false;
             }
         }
 #endif

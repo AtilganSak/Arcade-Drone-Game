@@ -82,8 +82,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ce1e38bfdf90ce47a36d35ea03de0c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lift: 7000
-  movement: 7000
+  mobile: 1
+  leftJoystick: {fileID: 0}
+  rightJoystick: {fileID: 0}
+  lift: 8000
+  movement: 8000
   rotationSpeed: 100
   blendSpeed: 2
   FOVEffect: 1
