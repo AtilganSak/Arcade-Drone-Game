@@ -3,6 +3,12 @@ using UnityEngine;
 
 public class DroneController : MonoBehaviour
 {
+    public bool mobile;
+    [ConditionalField("mobile",true)]
+    [SerializeField] FloatingJoystick leftJoystick;
+    [ConditionalField("mobile", true)]
+    [SerializeField] FloatingJoystick rightJoystick;
+
     [Tooltip("The speed of movement up or down.")]
     public float lift = 5;
     [Tooltip("Velocity movement speed.")]
@@ -41,7 +47,6 @@ public class DroneController : MonoBehaviour
     float rotateAnim;
     float baseCameraFOV;
 
-    Quaternion rotation;
     Rigidbody rigidbody;
     Animator anim;
     RaycastHit raycastHit;
@@ -50,7 +55,6 @@ public class DroneController : MonoBehaviour
     private void Start()
     {
         cinemachineFree = FindObjectOfType<CinemachineFreeLook>();
-        rotation = Quaternion.identity;
         myTransform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -81,19 +85,29 @@ public class DroneController : MonoBehaviour
 
     void GetInputs()
     {
-        if (!rawInput)
+        if (!mobile)
         {
-            LiftInput = Input.GetAxis("Lift");
-            RotateInput = Input.GetAxis("Rotate");
-            ThrustInput = Input.GetAxis("Vertical");
-            TiltInput = Input.GetAxis("Horizontal");
+            if (!rawInput)
+            {
+                LiftInput = Input.GetAxis("Lift");
+                RotateInput = Input.GetAxis("Rotate");
+                ThrustInput = Input.GetAxis("Vertical");
+                TiltInput = Input.GetAxis("Horizontal");
+            }
+            else
+            {
+                LiftInput = Input.GetAxisRaw("Lift");
+                RotateInput = Input.GetAxisRaw("Rotate");
+                ThrustInput = Input.GetAxisRaw("Vertical");
+                TiltInput = Input.GetAxisRaw("Horizontal");
+            }
         }
         else
         {
-            LiftInput = Input.GetAxisRaw("Lift");
-            RotateInput = Input.GetAxisRaw("Rotate");
-            ThrustInput = Input.GetAxisRaw("Vertical");
-            TiltInput = Input.GetAxisRaw("Horizontal");
+            LiftInput = rightJoystick.Vertical;
+            RotateInput = rightJoystick.Horizontal;
+            ThrustInput = leftJoystick.Vertical;
+            TiltInput = leftJoystick.Horizontal;
         }
         verticalAnim = anim.GetFloat("Vertical");
         horizontalAnim = anim.GetFloat("Horizontal");

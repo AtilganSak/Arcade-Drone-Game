@@ -13,6 +13,12 @@ public class DroneCameraRotate : MonoBehaviour
     public float returnBackSpeed = 3F;
     public float returnBackTime = 3F;
 
+    [Header("Limits")]
+    public float xMax;
+    public float xMin;
+    public float yMax;
+    public float yMin;
+
     Transform myTransform;
 
     Vector3 firstPosition;
@@ -52,10 +58,17 @@ public class DroneCameraRotate : MonoBehaviour
     }
     private void LateUpdate()
     {
+        Lebug.Log("Mouse Position", Input.mousePosition);
+
 #if UNITY_STANDALONE
         if (Input.GetMouseButtonDown(0))
         {
             firstPosition = Input.mousePosition;
+            if (firstPosition.x < xMin || firstPosition.x > xMax || firstPosition.y < yMin || firstPosition.y > yMax)
+            {
+                return;
+            }
+
             deltaPosition = Vector3.zero;
 
             counter = 0;
@@ -64,6 +77,11 @@ public class DroneCameraRotate : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
+            if (firstPosition.x < xMin || firstPosition.x > xMax || firstPosition.y < yMin || firstPosition.y > yMax)
+            {
+                return;
+            }
+
             deltaPosition = firstPosition - Input.mousePosition;
 
             firstPosition = Input.mousePosition;
@@ -86,12 +104,24 @@ public class DroneCameraRotate : MonoBehaviour
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
                 firstPosition = Input.mousePosition;
+                if (firstPosition.x < xMin || firstPosition.x > xMax || firstPosition.y < yMin || firstPosition.y > yMax)
+                {
+                    return;
+                }
+
                 deltaPosition = Vector3.zero;
 
+                counter = 0;
                 moving = true;
+                canReturnBack = false;
             }
             if (Input.GetTouch(0).phase == TouchPhase.Moved)
             {
+                if (firstPosition.x < xMin || firstPosition.x > xMax || firstPosition.y < yMin || firstPosition.y > yMax)
+                {
+                    return;
+                }
+
                 deltaPosition = firstPosition - Input.mousePosition;
 
                 firstPosition = Input.mousePosition;
