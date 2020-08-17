@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Cinemachine;
+using UnityEngine;
 
 public class DroneController : MonoBehaviour
 {
@@ -14,6 +13,14 @@ public class DroneController : MonoBehaviour
     [Tooltip("Speed ​​of transition between two animations.")]
     public float blendSpeed = 2;
 
+    public bool FOVEffect = true;
+    [ConditionalField("FOVEffect",true)]
+    public float desireFOVAmount = 70;
+    [ConditionalField("FOVEffect", true)]
+    public float transitionFOVSmooth = 3;
+
+    CinemachineFreeLook cinemachineFree;
+
     public bool rawInput;
     public ForceMode forceMode;
     public LayerMask ground;
@@ -24,7 +31,7 @@ public class DroneController : MonoBehaviour
     public float Altitude { get; private set; }
 
     public Transform myTransform { get; private set; }
-    
+
     float ThrustInput;
     float TiltInput;
     float LiftInput; 
@@ -32,6 +39,7 @@ public class DroneController : MonoBehaviour
     float verticalAnim;
     float horizontalAnim;
     float rotateAnim;
+    float baseCameraFOV;
 
     Quaternion rotation;
     Rigidbody rigidbody;
@@ -41,10 +49,13 @@ public class DroneController : MonoBehaviour
 
     private void Start()
     {
+        cinemachineFree = FindObjectOfType<CinemachineFreeLook>();
         rotation = Quaternion.identity;
         myTransform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+
+        baseCameraFOV = cinemachineFree.m_Lens.FieldOfView;
     }
 
     private void Update()
@@ -54,6 +65,8 @@ public class DroneController : MonoBehaviour
         GetInputs();
 
         SetAnimation();
+
+        CameraFOVEffect();
 
         CalculateAltitude();
 
@@ -85,6 +98,19 @@ public class DroneController : MonoBehaviour
         verticalAnim = anim.GetFloat("Vertical");
         horizontalAnim = anim.GetFloat("Horizontal");
         rotateAnim = anim.GetFloat("Rotate");
+    }
+    void CameraFOVEffect()
+    {
+        if (!FOVEffect) return;
+
+        if (ThrustInput > 0)
+        {
+            cinemachineFree.m_Lens.FieldOfView = Mathf.Lerp(cinemachineFree.m_Lens.FieldOfView, desireFOVAmount, Time.deltaTime * transitionFOVSmooth);
+        }
+        else
+        {
+            cinemachineFree.m_Lens.FieldOfView = Mathf.Lerp(cinemachineFree.m_Lens.FieldOfView, baseCameraFOV, Time.deltaTime * transitionFOVSmooth);
+        }
     }
     void SetAnimation()
     {
@@ -119,8 +145,8 @@ public class DroneController : MonoBehaviour
         Lebug.Log("Altitude", Altitude, "Drone");
 
         Lebug.Log("Lift", LiftInput, "Drone");
-        Lebug.Log("Rotate", RotateInput, "Drone");
-        Lebug.Log("Vertical", ThrustInput, "Drone");
-        Lebug.Log("Horizontal", TiltInput, "Drone");
+        Lebug.Log("Roll", RotateInput, "Drone");
+        Lebug.Log("Thrust", ThrustInput, "Drone");
+        Lebug.Log("Tilt", TiltInput, "Drone");
     }
 }
