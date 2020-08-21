@@ -31,6 +31,7 @@ public class DroneController : MonoBehaviour
     public ForceMode forceMode;
     public LayerMask ground;
 
+    public bool isMoving { get => Speed > 0; }
     //True drone speed.
     public float Speed { get; private set; }
     //The drone's height from the ground.
@@ -59,7 +60,7 @@ public class DroneController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
 
-        baseCameraFOV = cinemachineFree.m_Lens.FieldOfView;
+        //baseCameraFOV = cinemachineFree.m_Lens.FieldOfView;
     }
 
     private void Update()
