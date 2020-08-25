@@ -5,6 +5,8 @@ public class DroneCamera : MonoBehaviour
 {
     public bool mobile;
 
+    public DroneController droneController;
+
     public float smoothing;
     public float damping = 4;
 
@@ -48,8 +50,6 @@ public class DroneCamera : MonoBehaviour
     bool firstTrueTouched;
     bool isTouching;
 
-    DroneController droneController;
-
     Transform cameraTransform;
     Transform c_Transform;
 
@@ -70,8 +70,6 @@ public class DroneCamera : MonoBehaviour
 
         cameraTransform = GetComponentInChildren<Camera>().transform;
         position = cameraTransform.position;
-
-        droneController = GetComponentInParent<DroneController>();
     }
     private void Start()
     {

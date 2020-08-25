@@ -1574,7 +1574,7 @@ Transform:
 --- !u!114 &448015524867991642 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 721136057470956449, guid: ee5665690bcabe144b270c1cbb47f160, type: 3}
-  m_PrefabInstance: {fileID: 7584270934932707438}
+  m_PrefabInstance: {fileID: 4484335668142550127}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -1582,7 +1582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58c3d475e6166a14d95d079dd2a78b2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &7584270934932707438
+--- !u!1001 &4484335668142550127
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1602,6 +1602,22 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 673658335}
     - target: {fileID: 721136057470956449, guid: ee5665690bcabe144b270c1cbb47f160, type: 3}
+      propertyPath: maxDisField
+      value: 
+      objectReference: {fileID: 632516923}
+    - target: {fileID: 1416772377452112342, guid: ee5665690bcabe144b270c1cbb47f160, type: 3}
+      propertyPath: zoomRateField
+      value: 
+      objectReference: {fileID: 70374277}
+    - target: {fileID: 1416772377452112342, guid: ee5665690bcabe144b270c1cbb47f160, type: 3}
+      propertyPath: zoomDampingField
+      value: 
+      objectReference: {fileID: 1047068449}
+    - target: {fileID: 1416772377452112342, guid: ee5665690bcabe144b270c1cbb47f160, type: 3}
+      propertyPath: minDisField
+      value: 
+      objectReference: {fileID: 673658335}
+    - target: {fileID: 1416772377452112342, guid: ee5665690bcabe144b270c1cbb47f160, type: 3}
       propertyPath: maxDisField
       value: 
       objectReference: {fileID: 632516923}
