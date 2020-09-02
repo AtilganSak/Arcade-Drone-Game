@@ -31,7 +31,8 @@ public class DroneController : MonoBehaviour
     public ForceMode forceMode;
     public LayerMask ground;
 
-    public bool isMoving { get => Speed > 0; }
+    public bool AnyInput { get => ThrustInput != 0 || TiltInput != 0 || LiftInput != 0; }
+    public bool IsMoving { get => Speed > 0; }
     //True drone speed.
     public float Speed { get; private set; }
     //The drone's height from the ground.

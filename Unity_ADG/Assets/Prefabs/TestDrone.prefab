@@ -131,7 +131,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &448015524867991641
 Transform:
   m_ObjectHideFlags: 0
@@ -159,13 +159,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58c3d475e6166a14d95d079dd2a78b2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mobile: 0
   smoothing: 1
   damping: 4
   xSpeed: 10
   ySpeed: 10
   invertX: 0
   invertY: 1
+  showScreenLimit: 0
   touchableYLimitOffset: 0
+  returnBackSpeedTreshold: 0.1
+  returnBackTime: 6
+  returnBackSpeed: 5
   yMinLimit: -90
   yMaxLimit: 90
   zoomRate: 1
@@ -174,6 +179,8 @@ MonoBehaviour:
   zoomDampening: 4
   zoomRateField: {fileID: 0}
   zoomDampingField: {fileID: 0}
+  minDisField: {fileID: 0}
+  maxDisField: {fileID: 0}
 --- !u!1 &721136056450355078
 GameObject:
   m_ObjectHideFlags: 0
