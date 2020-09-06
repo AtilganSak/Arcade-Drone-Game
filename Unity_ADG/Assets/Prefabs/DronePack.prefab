@@ -100,6 +100,33 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &937475485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448015525959095421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef65adf4f4e97724aac48e75d78b6baa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noBattery: 0
+  maxBattery: 100
+  currentBattery: 100
+  powerCutThreshold: 10
+  powerOnThreshold: 10
+  idleBatteryConsumtion: 10
+  movingBatteryConsumtion: 5
+  lifeForMinute: 0
+  lifeForSecond: 0
+  batteryIsOver: 0
+  occupancyState: 0
+  consumtionState: 0
+  BatteryIsOverEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &879986241834131393
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,7 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58c3d475e6166a14d95d079dd2a78b2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mobile: 1
+  mobile: 0
   droneController: {fileID: 448015525481499480}
   smoothing: 1
   damping: 4
@@ -576,7 +603,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 721136056794779811, guid: abc9ab5fb58d0ac4e948f206b52f418e, type: 3}
       propertyPath: mobile
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 721136056794779811, guid: abc9ab5fb58d0ac4e948f206b52f418e, type: 3}
       propertyPath: leftJoystick
@@ -588,6 +615,11 @@ PrefabInstance:
       objectReference: {fileID: 4506557400314771053}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abc9ab5fb58d0ac4e948f206b52f418e, type: 3}
+--- !u!1 &448015525959095421 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 721136056450355078, guid: abc9ab5fb58d0ac4e948f206b52f418e, type: 3}
+  m_PrefabInstance: {fileID: 879986243211222011}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &448015525958731869 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 721136056450454438, guid: abc9ab5fb58d0ac4e948f206b52f418e, type: 3}
@@ -598,7 +630,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 721136056794779811, guid: abc9ab5fb58d0ac4e948f206b52f418e, type: 3}
   m_PrefabInstance: {fileID: 879986243211222011}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 448015525959095421}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ce1e38bfdf90ce47a36d35ea03de0c4, type: 3}
