@@ -23,6 +23,11 @@ public class BatteryModule : MonoBehaviour
     public float maxBattery = 1000;
     public float currentBattery = 100;
 
+    public float batteryPercentage
+    {
+        get => (currentBattery / maxBattery) * 100;
+    }
+
     public float powerCutThreshold = 10;
     public float powerOnThreshold = 10;
 
@@ -37,6 +42,8 @@ public class BatteryModule : MonoBehaviour
     float currentConsumtion;
     float secondCounter;
 
+    float singleSecond;
+
     public bool batteryIsOver;
 
     public OccupancyState occupancyState;
@@ -45,10 +52,27 @@ public class BatteryModule : MonoBehaviour
     public UnityEvent BatteryIsOverEvent;
 
     DroneController drone;
+    DroneUI droneUI;
 
+    string[] numberArray;
+
+    private void OnEnable()
+    {
+        numberArray = new string[101];
+        for (int i = 0; i < 101; i++)
+        {
+            if (i < 10)
+                numberArray[i] = "0" + i;
+            else
+                numberArray[i] = i.ToString();
+        }
+    }
     private void Start()
     {
+        droneUI = FindObjectOfType<DroneUI>();
         drone = GetComponent<DroneController>();
+
+        UpdateUI();
     }
     private void Update()
     {
@@ -63,6 +87,8 @@ public class BatteryModule : MonoBehaviour
                 CalculateBatteryLife();
 
                 SetOccupancyState();
+
+                UpdateUI();
             }
         }
     }
@@ -104,8 +130,9 @@ public class BatteryModule : MonoBehaviour
     }
     void CalculateBatteryLife()
     {
-        lifeForSecond = (int)(currentBattery / currentConsumtion);
-        lifeForMinute = (lifeForSecond / 60);
+        singleSecond = currentBattery / currentConsumtion;
+        lifeForMinute = (int)(singleSecond / 60F);
+        lifeForSecond = (int)(singleSecond % 60F);
     }
     void SetOccupancyState()
     {
@@ -130,7 +157,11 @@ public class BatteryModule : MonoBehaviour
             BatteryIsOverEvent.Invoke();
         }
     }
-
+    void UpdateUI()
+    {
+        droneUI.UpdateBatteryPercentageText(numberArray[(int)batteryPercentage]);
+        droneUI.UpdateRemainingTimeText(numberArray[lifeForMinute], numberArray[lifeForSecond]);
+    }
     public void ChargeBattery(float amount)
     {
         currentBattery += amount;
