@@ -16,6 +16,8 @@ public class OpenAndStartScenesOnEditor
     public static void OpenTestScene() => OpenScene("Drone Test");
     [MenuItem("Tools/Open Scene/Demo Test Scene")]
     public static void OpenDemoTestScene() => OpenScene("Demo_Test_Scene");
+    [MenuItem("Tools/Open Scene/Gameplay Test")]
+    public static void OpenGameplayTestScene() => OpenScene("GamePlayTestScene");
 
     //FUNCTIONS
     private static bool OpenScene(string scene)

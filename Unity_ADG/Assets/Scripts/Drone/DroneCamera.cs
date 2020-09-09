@@ -73,6 +73,10 @@ public class DroneCamera : MonoBehaviour
     }
     private void Start()
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        mobile = true;
+#endif
+
         desiredRotation = c_Transform.localRotation;
 
         currentDistance = Vector3.Distance(cameraTransform.position, c_Transform.position);
@@ -81,10 +85,10 @@ public class DroneCamera : MonoBehaviour
         xDeg = Vector3.Angle(Vector3.right, c_Transform.right);
         yDeg = Vector3.Angle(Vector3.up, c_Transform.up);
 
-        zoomRateField.text = zoomRate.ToString();
-        zoomDampingField.text = zoomDampening.ToString();
-        minDisField.text = minZoomDistance.ToString();
-        maxDisField.text = maxZoomDistance.ToString();
+        //zoomRateField.text = zoomRate.ToString();
+        //zoomDampingField.text = zoomDampening.ToString();
+        //minDisField.text = minZoomDistance.ToString();
+        //maxDisField.text = maxZoomDistance.ToString();
     }
     public void ChangedZoomReate(string s)
     {

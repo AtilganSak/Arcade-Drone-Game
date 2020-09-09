@@ -52,11 +52,40 @@ public class CargoSystem : MonoBehaviour
 
         transportModule.OnReceived += ReceivedCargo;
         transportModule.OnDelivered += DeliveredCargo;
+
+        GC.Collect();
     }
     private void OnDestroy()
     {
         transportModule.OnReceived -= ReceivedCargo;
         transportModule.OnDelivered -= DeliveredCargo;
+    }
+    private void Start()
+    {
+        for (int i = 0; i < cargos.Length; i++)
+            cargos[i].upPivot.gameObject.SetActive(false);
+
+        ActiveNearCargo();
+
+        GC.Collect();
+    }
+    void ActiveNearCargo()
+    {
+        float nearDistance = int.MaxValue;
+        Cargo nearCargo = null;
+        for (int i = 0; i < cargos.Length; i++)
+        {
+            if (cargos[i].available)
+            {
+                if ((cargos[i].Transform.position - transportModule.Transform.position).sqrMagnitude < nearDistance)
+                {
+                    nearDistance = (cargos[i].Transform.position - transportModule.Transform.position).sqrMagnitude;
+                    nearCargo = cargos[i];
+                }
+            }
+        }
+        if(nearCargo != null)
+            nearCargo.upPivot.gameObject.SetActive(true);
     }
     void DeliveredCargo(Cargo cargo)
     {
@@ -80,11 +109,19 @@ public class CargoSystem : MonoBehaviour
         cargoUI?.UpdateDeliveredCargoCount(deliveredCargoCount);
         cargoUI?.UpdateRemaningCargoCount(remaningCargoCount);
 
+        receivedCargoNow.downPivot.gameObject.SetActive(false);
+
+        if(remaningCargoCount != 0)
+            ActiveNearCargo();
+
         receivedCargoNow = null;
     }
     void ReceivedCargo(Cargo cargo)
     {
         receivedCargoNow = cargo;
+
+        receivedCargoNow.indicator.enabled = false;
+
         Lebug.Log("Received Cargo Now", receivedCargoNow, "Cargo System");
     }
 }

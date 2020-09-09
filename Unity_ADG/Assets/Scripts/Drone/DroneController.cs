@@ -61,7 +61,9 @@ public class DroneController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
 
-        //baseCameraFOV = cinemachineFree.m_Lens.FieldOfView;
+#if UNITY_ANDROID && !UNITY_EDITOR
+        mobile = true;
+#endif
     }
 
     private void Update()
@@ -70,7 +72,7 @@ public class DroneController : MonoBehaviour
 
         GetInputs();
 
-        SetAnimation();
+        //SetAnimation();
 
         CameraFOVEffect();
 
@@ -111,9 +113,9 @@ public class DroneController : MonoBehaviour
             ThrustInput = leftJoystick.Vertical;
             TiltInput = leftJoystick.Horizontal;
         }
-        verticalAnim = anim.GetFloat("Vertical");
-        horizontalAnim = anim.GetFloat("Horizontal");
-        rotateAnim = anim.GetFloat("Rotate");
+        //verticalAnim = anim.GetFloat("Vertical");
+        //horizontalAnim = anim.GetFloat("Horizontal");
+        //rotateAnim = anim.GetFloat("Rotate");
     }
     void CameraFOVEffect()
     {

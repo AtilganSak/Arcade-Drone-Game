@@ -4,18 +4,25 @@ public class DeliveryPlace : MonoBehaviour
 {
     public Transform dropPoint;
 
+    public GameObject visual;
+
     public bool cargoIsHere { get; private set; }
 
     public Cargo cargo { get; private set; }
 
     bool isActive;
 
+    Target indicator;
+
     Transform c_Transform;
     Collider collider;
 
     private void OnEnable()
     {
+        indicator = GetComponent<Target>();
+        
         c_Transform = transform;
+
         collider = GetComponent<Collider>();
     }
     private void Start()
@@ -26,11 +33,19 @@ public class DeliveryPlace : MonoBehaviour
     {
         collider.enabled = true;
 
+        visual.SetActive(true);
+
+        indicator.enabled = true;
+
         isActive = true;
     }
     public void Deactivate()
     {
         collider.enabled = false;
+
+        visual.SetActive(false);
+
+        indicator.enabled = false;
 
         isActive = false;
     }

@@ -9,57 +9,28 @@ public class Cargo : MonoBehaviour
 
     public bool isCarrying { get; private set; }
 
-    Rigidbody rigid;
-    public Rigidbody Rigidbody
-    {
-        get
-        {
-            if (rigid == null)
-                rigid = GetComponentInParent<Rigidbody>();
-
-            return rigid;
-        }
-        set
-        {
-            rigid = value;
-        }
-    }
-
-    Transform t;
-    public Transform Transform
-    {
-        get
-        {
-            if (t == null)
-                t = GetComponent<Transform>();
-
-            return t;
-        }
-    }
-
-    Collider coll;
-    public Collider Collider
-    {
-        get
-        {
-            if (coll == null)
-                coll = GetComponent<Collider>();
-
-            return coll;
-        }
-    }
-
-    Transform downPivot;
-    Transform upPivot;
+    public Rigidbody Rigidbody { get; private set; }
+    public Transform Transform { get; private set; }
+    public Collider Collider { get; private set; }
+    public GameObject GameObject { get; private set; }
+    public Transform downPivot { get; private set; }
+    public Transform upPivot { get; private set; }
+    public Target indicator { get; private set; }
 
     RaycastHit rayCastHit;
 
-    private void Start()
+    private void OnEnable()
     {
+        Transform = transform;
+        GameObject = gameObject;
+        Rigidbody = GetComponentInParent<Rigidbody>();
+        Collider = GetComponent<Collider>();
+        indicator = GetComponent<Target>();
+
         upPivot = Transform.root;
-        
         downPivot = upPivot.GetChild(0);
     }
+
     public void Received()
     {
         isCarrying = true;

@@ -21,6 +21,15 @@ public class TransportModule : MonoBehaviour
     AudioSource audioSource;
 
     Transform c_Transform;
+    public  Transform Transform
+    {
+        get
+        {
+            if (c_Transform == null)
+                c_Transform = transform;
+            return c_Transform;
+        }
+    }
 
     private void OnEnable()
     {
