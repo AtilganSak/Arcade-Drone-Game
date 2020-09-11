@@ -95,7 +95,7 @@ public class CargoSystem : MonoBehaviour
             cargoUI?.UpdateDeliveredCargoCount(deliveredCargoCount);
             cargoUI?.UpdateRemaningCargoCount(remaningCargoCount);
         }
-        else
+        if(deliveredCargoCount == cargosCount)
         {
             deliveredCargoCount = cargosCount;
 

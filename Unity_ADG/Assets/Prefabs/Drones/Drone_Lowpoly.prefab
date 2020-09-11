@@ -286,6 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ce1e38bfdf90ce47a36d35ea03de0c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isActive: 1
   mobile: 0
   leftJoystick: {fileID: 0}
   rightJoystick: {fileID: 0}
@@ -313,13 +314,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef65adf4f4e97724aac48e75d78b6baa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isActive: 1
   noBattery: 0
   maxBattery: 100
   currentBattery: 100
   powerCutThreshold: 10
   powerOnThreshold: 10
-  idleBatteryConsumtion: 0.3
-  movingBatteryConsumtion: 0.3
+  idleBatteryConsumtion: 0.5
+  movingBatteryConsumtion: 0.5
   lifeForMinute: 0
   lifeForSecond: 0
   batteryIsOver: 0

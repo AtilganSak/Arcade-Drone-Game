@@ -18,6 +18,8 @@ public class BatteryModule : MonoBehaviour
         Move
     }
 
+    public bool isActive = true;
+
     public bool noBattery;
 
     public float maxBattery = 1000;
@@ -76,6 +78,8 @@ public class BatteryModule : MonoBehaviour
     }
     private void Update()
     {
+        if (!isActive) return;
+
         if (!noBattery)
         {
             if (!batteryIsOver)
@@ -86,9 +90,9 @@ public class BatteryModule : MonoBehaviour
 
                 CalculateBatteryLife();
 
-                SetOccupancyState();
-
                 UpdateUI();
+
+                SetOccupancyState();
             }
         }
     }

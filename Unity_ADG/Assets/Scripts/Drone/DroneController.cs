@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class DroneController : MonoBehaviour
 {
+    public bool isActive = true;
+
     public bool mobile;
     [ConditionalField("mobile",true)]
     [SerializeField] FloatingJoystick leftJoystick;
@@ -24,8 +26,6 @@ public class DroneController : MonoBehaviour
     public float desireFOVAmount = 70;
     [ConditionalField("FOVEffect", true)]
     public float transitionFOVSmooth = 3;
-
-    CinemachineFreeLook cinemachineFree;
 
     public bool rawInput;
     public ForceMode forceMode;
@@ -49,6 +49,7 @@ public class DroneController : MonoBehaviour
     float rotateAnim;
     float baseCameraFOV;
 
+    Camera camera;
     Rigidbody rigidbody;
     Animator anim;
     RaycastHit raycastHit;
@@ -56,7 +57,7 @@ public class DroneController : MonoBehaviour
 
     private void Start()
     {
-        cinemachineFree = FindObjectOfType<CinemachineFreeLook>();
+        camera = Camera.main;
         myTransform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -68,6 +69,8 @@ public class DroneController : MonoBehaviour
 
     private void Update()
     {
+        if (!isActive) return;
+
         Debug();
 
         GetInputs();
@@ -123,11 +126,11 @@ public class DroneController : MonoBehaviour
 
         if (ThrustInput > 0)
         {
-            cinemachineFree.m_Lens.FieldOfView = Mathf.Lerp(cinemachineFree.m_Lens.FieldOfView, desireFOVAmount, Time.deltaTime * transitionFOVSmooth);
+            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, desireFOVAmount, Time.deltaTime * transitionFOVSmooth);
         }
         else
         {
-            cinemachineFree.m_Lens.FieldOfView = Mathf.Lerp(cinemachineFree.m_Lens.FieldOfView, baseCameraFOV, Time.deltaTime * transitionFOVSmooth);
+            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, baseCameraFOV, Time.deltaTime * transitionFOVSmooth);
         }
     }
     void SetAnimation()

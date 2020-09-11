@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class DroneCamera : MonoBehaviour
 {
-    public bool mobile;
-
     public DroneController droneController;
+
+    public bool isActive = true;
 
     public float smoothing;
     public float damping = 4;
 
     public float xSpeed = 10;
     public float ySpeed = 10;
+    public float xSpeedM = 4;
+    public float ySpeedM = 4;
 
     public bool invertX;
     public bool invertY = true;
@@ -56,6 +59,7 @@ public class DroneCamera : MonoBehaviour
     Quaternion resetRotation;
     Quaternion desiredRotation;
 
+    Vector3 directEuler;
     Vector3 position;
     Vector2 touchZeroPrevPos;
     Vector2 touchOnePrevPos;
@@ -73,17 +77,10 @@ public class DroneCamera : MonoBehaviour
     }
     private void Start()
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        mobile = true;
-#endif
-
         desiredRotation = c_Transform.localRotation;
 
         currentDistance = Vector3.Distance(cameraTransform.position, c_Transform.position);
         desiredDistance = Vector3.Distance(cameraTransform.position, c_Transform.position);
-
-        xDeg = Vector3.Angle(Vector3.right, c_Transform.right);
-        yDeg = Vector3.Angle(Vector3.up, c_Transform.up);
 
         //zoomRateField.text = zoomRate.ToString();
         //zoomDampingField.text = zoomDampening.ToString();
@@ -108,6 +105,8 @@ public class DroneCamera : MonoBehaviour
     }
     private void Update()
     {
+        if (!isActive) return;
+
         if (!isTouching)
         {
             if (droneController.Speed > returnBackSpeedTreshold && !returnBack)
@@ -129,36 +128,100 @@ public class DroneCamera : MonoBehaviour
         }
 
 #if  UNITY_EDITOR || UNITY_STANDALONE
-        if (!mobile)
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.mousePosition.y > Screen.height / 2 - touchableYLimitOffset)
             {
-                if (Input.mousePosition.y > Screen.height / 2 - touchableYLimitOffset)
+                if (!EventSystem.current.IsPointerOverGameObject())
                 {
                     firstTrueTouched = true;
                     isTouching = true;
                     counter = 0;
                     returnBack = false;
 
+                    directEuler = c_Transform.DirectEuler();
+                    xDeg = directEuler.y;
+                    yDeg = directEuler.x;
+
                     desiredRotation = c_Transform.localRotation;
+                }
+            }
+            else
+            {
+                firstTrueTouched = false;
+            }
+        }
+        if (Input.GetMouseButton(0))
+        {
+            if (firstTrueTouched)
+            {
+                if (!invertX)
+                    xDeg += Input.GetAxis("Mouse X") * Time.deltaTime * xSpeed;
+                else
+                    xDeg -= Input.GetAxis("Mouse X") * Time.deltaTime * xSpeed;
+                if (!invertY)
+                    yDeg += Input.GetAxis("Mouse Y") * Time.deltaTime * ySpeed;
+                else
+                    yDeg -= Input.GetAxis("Mouse Y") * Time.deltaTime * ySpeed;
+
+                ClampAndLimit();
+
+                desiredRotation = Quaternion.Euler(yDeg, xDeg, 0);
+
+                c_Transform.localRotation = Quaternion.Slerp(c_Transform.localRotation, desiredRotation, Time.deltaTime * smoothing);
+            }
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            firstTrueTouched = false;
+            isTouching = false;
+        }
+        if (c_Transform.localRotation != desiredRotation)
+        {
+            c_Transform.localRotation = Quaternion.Slerp(c_Transform.localRotation, desiredRotation, Time.deltaTime * damping);
+        }
+#endif
+#if UNITY_ANDROID
+        #region Rotate
+        if (Input.touchCount == 1)
+        {
+            touchZero = Input.GetTouch(0);
+
+            if (touchZero.phase == TouchPhase.Began)
+            {
+                if (touchZero.position.y > Screen.height / 2 - touchableYLimitOffset)
+                {
+                    if (!EventSystem.current.IsPointerOverGameObject())
+                    {
+                        firstTrueTouched = true;
+                        isTouching = true;
+                        counter = 0;
+                        returnBack = false;
+
+                        directEuler = c_Transform.DirectEuler();
+                        xDeg = directEuler.y;
+                        yDeg = directEuler.x;
+
+                        desiredRotation = c_Transform.localRotation;
+                    }
                 }
                 else
                 {
                     firstTrueTouched = false;
                 }
             }
-            if (Input.GetMouseButton(0))
+            if (touchZero.phase == TouchPhase.Moved)
             {
                 if (firstTrueTouched)
                 {
                     if (!invertX)
-                        xDeg += Input.GetAxis("Mouse X");
+                        xDeg += Input.touches[0].deltaPosition.x * Time.deltaTime * xSpeedM;
                     else
-                        xDeg -= Input.GetAxis("Mouse X");
+                        xDeg -= Input.touches[0].deltaPosition.x * Time.deltaTime * xSpeedM;
                     if (!invertY)
-                        yDeg += Input.GetAxis("Mouse Y");
+                        yDeg += Input.touches[0].deltaPosition.y * Time.deltaTime * ySpeedM;
                     else
-                        yDeg -= Input.GetAxis("Mouse Y");
+                        yDeg -= Input.touches[0].deltaPosition.y * Time.deltaTime * ySpeedM;
 
                     ClampAndLimit();
 
@@ -167,106 +230,51 @@ public class DroneCamera : MonoBehaviour
                     c_Transform.localRotation = Quaternion.Slerp(c_Transform.localRotation, desiredRotation, Time.deltaTime * smoothing);
                 }
             }
-            if (Input.GetMouseButtonUp(0))
+            if (touchZero.phase == TouchPhase.Ended)
             {
                 firstTrueTouched = false;
                 isTouching = false;
             }
-            if (c_Transform.localRotation != desiredRotation)
-            {
-                c_Transform.localRotation = Quaternion.Slerp(c_Transform.localRotation, desiredRotation, Time.deltaTime * damping);
-            }
         }
-#endif
-#if UNITY_EDITOR || UNITY_ANDROID
-        if (mobile)
+        if (c_Transform.localRotation != desiredRotation)
         {
-            #region Rotate
-            if (Input.touchCount == 1)
-            {
-                touchZero = Input.GetTouch(0);
-
-                if (touchZero.phase == TouchPhase.Began)
-                {
-                    if (touchZero.position.y > Screen.height / 2 - touchableYLimitOffset)
-                    {
-                        firstTrueTouched = true;
-                        isTouching = true;
-                        counter = 0;
-                        returnBack = false;
-
-                        desiredRotation = c_Transform.localRotation;
-                    }
-                    else
-                    {
-                        firstTrueTouched = false;
-                    }
-                }
-                if (touchZero.phase == TouchPhase.Moved)
-                {
-                    if (firstTrueTouched)
-                    {
-                        if (!invertX)
-                            xDeg += Input.touches[0].deltaPosition.x * Time.deltaTime * xSpeed;
-                        else
-                            xDeg -= Input.touches[0].deltaPosition.x * Time.deltaTime * xSpeed;
-                        if (!invertY)
-                            yDeg += Input.touches[0].deltaPosition.y * Time.deltaTime * ySpeed;
-                        else
-                            yDeg -= Input.touches[0].deltaPosition.y * Time.deltaTime * ySpeed;
-
-                        ClampAndLimit();
-
-                        desiredRotation = Quaternion.Euler(yDeg, xDeg, 0);
-
-                        c_Transform.localRotation = Quaternion.Slerp(c_Transform.localRotation, desiredRotation, Time.deltaTime * smoothing);
-                    }
-                }
-                if (touchZero.phase == TouchPhase.Ended)
-                {
-                    firstTrueTouched = false;
-                    isTouching = false;
-                }
-            }
-            if (c_Transform.localRotation != desiredRotation)
-            {
-                c_Transform.localRotation = Quaternion.Slerp(c_Transform.localRotation, desiredRotation, Time.deltaTime * damping);
-            }
-            #endregion
-
-            #region Zoom
-            if (Input.touchCount == 2)
-            {
-                if (firstTrueTouched)
-                {
-                    // Store both touches.
-                    touchZero = Input.GetTouch(0);
-                    touchOne = Input.GetTouch(1);
-
-                    // Find the position in the previous frame of each touch.
-                    touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-                    touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
-
-                    // Find the magnitude of the vector (the distance) between the touches in each frame.
-                    float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).sqrMagnitude;
-                    float touchDeltaMag = (touchZero.position - touchOne.position).sqrMagnitude;
-
-                    // Find the difference in the distances between each frame.
-                    float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
-
-                    // affect the desired Zoom distance if we pinch
-                    desiredDistance += deltaMagnitudeDiff * Time.deltaTime * zoomRate * Mathf.Abs(desiredDistance) * 0.001f;
-                    //clamp the zoom min/max
-                    desiredDistance = Mathf.Clamp(desiredDistance, minZoomDistance, maxZoomDistance);
-                    // For smoothing of the zoom, lerp distance
-                    currentDistance = Mathf.Lerp(currentDistance, desiredDistance, Time.deltaTime * zoomDampening);
-
-                    position = c_Transform.position - (cameraTransform.rotation * Vector3.forward * currentDistance);
-                    cameraTransform.position = Vector3.Lerp(cameraTransform.position, position, Time.deltaTime * zoomDampening);
-                }
-            }
-            #endregion
+            c_Transform.localRotation = Quaternion.Slerp(c_Transform.localRotation, desiredRotation, Time.deltaTime * damping);
         }
+        #endregion
+#endif
+#if UNITY_ANDROID && !UNITY_EDITOR
+        #region Zoom
+        if (Input.touchCount == 2)
+        {
+            if (firstTrueTouched)
+            {
+                // Store both touches.
+                touchZero = Input.GetTouch(0);
+                touchOne = Input.GetTouch(1);
+
+                // Find the position in the previous frame of each touch.
+                touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+                touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+                // Find the magnitude of the vector (the distance) between the touches in each frame.
+                float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).sqrMagnitude;
+                float touchDeltaMag = (touchZero.position - touchOne.position).sqrMagnitude;
+
+                // Find the difference in the distances between each frame.
+                float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+                // affect the desired Zoom distance if we pinch
+                desiredDistance += deltaMagnitudeDiff * Time.deltaTime * zoomRate * Mathf.Abs(desiredDistance) * 0.001f;
+                //clamp the zoom min/max
+                desiredDistance = Mathf.Clamp(desiredDistance, minZoomDistance, maxZoomDistance);
+                // For smoothing of the zoom, lerp distance
+                currentDistance = Mathf.Lerp(currentDistance, desiredDistance, Time.deltaTime * zoomDampening);
+
+                position = c_Transform.position - (cameraTransform.rotation * Vector3.forward * currentDistance);
+                cameraTransform.position = Vector3.Lerp(cameraTransform.position, position, Time.deltaTime * zoomDampening);
+            }
+        }
+        #endregion
 #endif
     }
     void ClampAndLimit()
@@ -284,7 +292,7 @@ public class DroneCamera : MonoBehaviour
 #if UNITY_EDITOR
     private void OnGUI()
     {
-        if(showScreenLimit)
+        if (showScreenLimit)
             GUI.Box(new Rect(0, Screen.height / 2 + touchableYLimitOffset, Screen.width, 10), "Box");
     }
 #endif
