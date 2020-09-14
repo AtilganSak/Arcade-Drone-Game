@@ -1617,6 +1617,10 @@ PrefabInstance:
       propertyPath: ySpeed
       value: 700
       objectReference: {fileID: 0}
+    - target: {fileID: 4484335667860341818, guid: ee5665690bcabe144b270c1cbb47f160, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4910680932806723387, guid: ee5665690bcabe144b270c1cbb47f160, type: 3}
       propertyPath: m_LocalPosition.x
       value: 64.77

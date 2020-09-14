@@ -5,12 +5,6 @@ public class DroneController : MonoBehaviour
 {
     public bool isActive = true;
 
-    public bool mobile;
-    [ConditionalField("mobile",true)]
-    [SerializeField] FloatingJoystick leftJoystick;
-    [ConditionalField("mobile", true)]
-    [SerializeField] FloatingJoystick rightJoystick;
-
     [Tooltip("The speed of movement up or down.")]
     public float lift = 5;
     [Tooltip("Velocity movement speed.")]
@@ -20,6 +14,8 @@ public class DroneController : MonoBehaviour
     public float rotationSpeed = 5;
     [Tooltip("Speed ​​of transition between two animations.")]
     public float blendSpeed = 2;
+
+    public float kEpsilon = 0.1F;
 
     public bool FOVEffect = true;
     [ConditionalField("FOVEffect",true)]
@@ -58,13 +54,10 @@ public class DroneController : MonoBehaviour
     private void Start()
     {
         camera = Camera.main;
+        baseCameraFOV = camera.fieldOfView;
         myTransform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-        mobile = true;
-#endif
     }
 
     private void Update()
@@ -92,29 +85,39 @@ public class DroneController : MonoBehaviour
 
     void GetInputs()
     {
-        if (!mobile)
+        if (!rawInput)
         {
-            if (!rawInput)
+            LiftInput = Input.GetAxis("Lift");
+            if(LiftInput < 0)
             {
-                LiftInput = Input.GetAxis("Lift");
-                RotateInput = Input.GetAxis("Rotate");
-                ThrustInput = Input.GetAxis("Vertical");
-                TiltInput = Input.GetAxis("Horizontal");
+                if (LiftInput > -kEpsilon)
+                    LiftInput = 0;
             }
             else
             {
-                LiftInput = Input.GetAxisRaw("Lift");
-                RotateInput = Input.GetAxisRaw("Rotate");
-                ThrustInput = Input.GetAxisRaw("Vertical");
-                TiltInput = Input.GetAxisRaw("Horizontal");
+                if (LiftInput < kEpsilon)
+                    LiftInput = 0;
             }
+            RotateInput = Input.GetAxis("Rotate");
+            if (RotateInput < 0)
+            {
+                if (RotateInput > -kEpsilon)
+                    RotateInput = 0;
+            }
+            else
+            {
+                if (RotateInput < kEpsilon)
+                    RotateInput = 0;
+            }
+            ThrustInput = Input.GetAxis("Vertical");
+            TiltInput = Input.GetAxis("Horizontal");
         }
         else
         {
-            LiftInput = rightJoystick.Vertical;
-            RotateInput = rightJoystick.Horizontal;
-            ThrustInput = leftJoystick.Vertical;
-            TiltInput = leftJoystick.Horizontal;
+            LiftInput = Input.GetAxisRaw("Lift");
+            RotateInput = Input.GetAxisRaw("Rotate");
+            ThrustInput = Input.GetAxisRaw("Vertical");
+            TiltInput = Input.GetAxisRaw("Horizontal");
         }
         //verticalAnim = anim.GetFloat("Vertical");
         //horizontalAnim = anim.GetFloat("Horizontal");

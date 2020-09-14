@@ -287,15 +287,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  mobile: 0
-  leftJoystick: {fileID: 0}
-  rightJoystick: {fileID: 0}
   lift: 8000
   movement: 8000
   rotationSpeed: 100
   blendSpeed: 2
-  FOVEffect: 0
-  desireFOVAmount: 50
+  kEpsilon: 0.3
+  FOVEffect: 1
+  desireFOVAmount: 45
   transitionFOVSmooth: 3
   rawInput: 0
   forceMode: 0
