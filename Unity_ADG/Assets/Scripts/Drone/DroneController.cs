@@ -49,7 +49,7 @@ public class DroneController : MonoBehaviour
     Rigidbody rigidbody;
     Animator anim;
     RaycastHit raycastHit;
-    Vector3 upAngle;
+    Quaternion deltaRotation;
 
     private void Start()
     {
@@ -148,9 +148,8 @@ public class DroneController : MonoBehaviour
     }
     void Rotation()
     {
-        upAngle.y = RotateInput;
-        upAngle = upAngle.normalized * rotationSpeed * Time.fixedDeltaTime;
-        rigidbody.MoveRotation(rigidbody.rotation * Quaternion.Euler(upAngle));
+        deltaRotation = Quaternion.Euler(0, RotateInput * Time.fixedDeltaTime * rotationSpeed, 0);
+        rigidbody.MoveRotation(rigidbody.rotation * deltaRotation);
     }
     void CalculateAltitude()
     {
