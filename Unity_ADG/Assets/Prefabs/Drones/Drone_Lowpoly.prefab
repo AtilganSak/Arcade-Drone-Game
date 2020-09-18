@@ -214,6 +214,7 @@ GameObject:
   - component: {fileID: 9106234674284666479}
   - component: {fileID: 9106234674284666476}
   - component: {fileID: 8385180633513538386}
+  - component: {fileID: 4208856275991889579}
   m_Layer: 0
   m_Name: Drone_Lowpoly
   m_TagString: Untagged
@@ -328,6 +329,19 @@ MonoBehaviour:
   BatteryIsOverEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4208856275991889579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9106234672615817545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afc72ffbd7167ca4580d73c7cf82705d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  money: 0
 --- !u!1 &9106234672615817561
 GameObject:
   m_ObjectHideFlags: 0

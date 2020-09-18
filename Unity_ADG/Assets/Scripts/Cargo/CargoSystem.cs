@@ -3,9 +3,12 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class CargoSystem : MonoBehaviour
 {
+    public bool showDistances;
+
     public GameObject[] cargoPrefabs;
     public int deliveredCargoCount { get; private set; }
     public Cargo receivedCargoNow { get; private set; }
@@ -17,6 +20,16 @@ public class CargoSystem : MonoBehaviour
     DeliveryPlace[] deliveryPlaces;
     List<DeliveryPlace> emptyDeliveryPlaces;
 
+    private void OnValidate()
+    {
+        if (showDistances)
+        {
+            if (cargos.Length == 0)
+            {
+                cargos = FindObjectsOfType<Cargo>();
+            }
+        }
+    }
     private void OnEnable()
     {
         cargoUI = FindObjectOfType<CargoUI>();
@@ -126,6 +139,36 @@ public class CargoSystem : MonoBehaviour
             newCargo.upPivot.gameObject.FixNameForClone();
             newCargo.upPivot.position = cargoPoint.transform.position;
             newCargo.DoReceivableWithTime(5);
+        }
+    }
+    float nearDistance = 9999999F;
+    float farDistance = 0F;
+    private void OnDrawGizmos()
+    {
+        if (showDistances)
+        {
+            if (cargos.Length > 0)
+            {
+                for (int i = 0; i < cargos.Length; i++)
+                {
+                    Gizmos.color = Color.white;
+                    Handles.color = Color.white;
+                    if (Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position) <= nearDistance)
+                    {
+                        nearDistance = Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position);
+                        Gizmos.color = Color.green;
+                    }
+                    else if(Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position) >= farDistance)
+                    {
+                        farDistance = Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position);
+                        Gizmos.color = Color.red;
+                    }
+
+                    Gizmos.DrawLine(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position);
+
+                    Handles.Label((cargos[i].transform.position + cargos[i].deliveryPlace.transform.position) / 2, Mathf.RoundToInt(Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position)).ToString());
+                }
+            }
         }
     }
 }

@@ -24,17 +24,20 @@ public class Cargo : MonoBehaviour
 
     public int listIndex { get; set; }
     public bool spawning { get; private set; }
+    public float distance { get; private set; }
+    public int earnedMoney { get; private set; }
 
-    public bool visibleByCamera;
-    public bool startTimer;
-    public bool waitedForTime;
+    bool startTimer;
+    bool waitedForTime;
 
-    public float timer;
+    float timer;
     float waitTime;
 
+    Player player;
     MeshRenderer meshRenderer;
     RaycastHit rayCastHit;
     WaitForSeconds forSeconds;
+    MoneyManager moneyManager;
 
     Camera camera;
 
@@ -46,6 +49,8 @@ public class Cargo : MonoBehaviour
         GameObject = gameObject;
         Collider = GetComponent<Collider>();
         meshRenderer = GetComponent<MeshRenderer>();
+        moneyManager = FindObjectOfType<MoneyManager>();
+        player = FindObjectOfType<Player>();
 
         forSeconds = new WaitForSeconds(0.5F);
 
@@ -58,14 +63,6 @@ public class Cargo : MonoBehaviour
     private void Start()
     {
         CalculateDistance();
-    }
-    private void OnBecameVisible()
-    {
-        visibleByCamera = true;
-    }
-    private void OnBecameInvisible()
-    {
-        visibleByCamera = false;
     }
     private void Update()
     {
@@ -131,6 +128,8 @@ public class Cargo : MonoBehaviour
     {
         isCarrying = false;
 
+        player.EarnMoney(earnedMoney);
+
         deliveryPlace.DeliveredCargo(this);
     }
     public void SnapTransport(Transform snapPoint)
@@ -153,10 +152,13 @@ public class Cargo : MonoBehaviour
     }
     public void CalculateDistance()
     {
+        distance = Mathf.RoundToInt(Vector3.Distance(Transform.position, deliveryPlace.transform.position));
         if (deliveryPlace != null)
-            distanceText.text = Mathf.RoundToInt(Vector3.Distance(Transform.position, deliveryPlace.transform.position)).ToString();
+            distanceText.text = distance.ToString();
         else
             distanceText.gameObject.SetActive(false);
+
+        earnedMoney = moneyManager.GiveMoney(distance);
     }
     void FixTransformBySurface()
     {
