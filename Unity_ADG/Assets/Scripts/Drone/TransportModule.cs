@@ -44,7 +44,7 @@ public class TransportModule : MonoBehaviour
             if (other.GetComponent<Cargo>())
             {
                 Cargo cargo = other.GetComponent<Cargo>();
-                if (cargo.available)
+                if (cargo.receivable)
                 {
                     ReceiveCargo(cargo);
                 }
@@ -54,11 +54,6 @@ public class TransportModule : MonoBehaviour
     void ReceiveCargo(Cargo cargo)
     {
         Cargo = cargo;
-
-        Cargo.Rigidbody.angularVelocity = Vector3.zero;
-        Cargo.Rigidbody.velocity = Vector3.zero;
-
-        Destroy(Cargo.Rigidbody);
 
         Cargo.SnapTransport(snapPoint == null ? c_Transform : snapPoint);
 

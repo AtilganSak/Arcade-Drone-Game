@@ -17,6 +17,11 @@ public static class ExtensionMethods
     private static string URP_STD_SHADER_NAME = "Universal Render Pipeline/Lit";
 
     #region Gameobject
+    public static void FixNameForClone(this GameObject obj)
+    {
+        string newName = obj.name.Remove(obj.name.Length - 7);
+        obj.name = newName;
+    }
     public static bool HasComponent<T>(this GameObject gameObject, T component = default)
     {
         T temp = gameObject.GetComponent<T>();

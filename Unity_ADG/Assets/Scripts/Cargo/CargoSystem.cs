@@ -1,33 +1,21 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CargoSystem : MonoBehaviour
 {
+    public GameObject[] cargoPrefabs;
     public int deliveredCargoCount { get; private set; }
-    public int cargosCount { get; private set; }
-    public int remaningCargoCount
-    {
-        get
-        {
-            if (deliveredCargoCount > cargosCount)
-                return 0;
-            else
-                return cargosCount - deliveredCargoCount;
-        }
-    }
     public Cargo receivedCargoNow { get; private set; }
 
-    public Action deliveryIsCompleted;
-
     CargoUI cargoUI;
+    TransportModule transportModule;
 
     Cargo[] cargos;
-    
     DeliveryPlace[] deliveryPlaces;
-
-    TransportModule transportModule;
+    List<DeliveryPlace> emptyDeliveryPlaces;
 
     private void OnEnable()
     {
@@ -42,13 +30,14 @@ public class CargoSystem : MonoBehaviour
         transportModule = FindObjectOfType<TransportModule>();
         if (transportModule == null) enabled = false;
 
-        cargosCount = cargos.Length;
-        cargoUI?.UpdateTotalCargoCount(cargos.Length);
-        cargoUI?.UpdateRemaningCargoCount(remaningCargoCount);
-        cargoUI?.UpdateDeliveredCargoCount(deliveredCargoCount);
+        for (int i = 0; i < deliveryPlaces.Length; i++)
+            deliveryPlaces[i].listIndex = i;
+        for (int i = 0; i < cargos.Length; i++)
+            cargos[i].listIndex = i;
 
-        Lebug.Log("Cargos Count", cargosCount, "Cargo System");
-        Lebug.Log("Remaning Cargo Count", remaningCargoCount, "Cargo System");
+        emptyDeliveryPlaces = new List<DeliveryPlace>(deliveryPlaces.Length);
+
+        cargoUI?.UpdateDeliveredCargoCount(deliveredCargoCount);
 
         transportModule.OnReceived += ReceivedCargo;
         transportModule.OnDelivered += DeliveredCargo;
@@ -60,68 +49,83 @@ public class CargoSystem : MonoBehaviour
         transportModule.OnReceived -= ReceivedCargo;
         transportModule.OnDelivered -= DeliveredCargo;
     }
-    private void Start()
+
+    public void AddEmptyDeliveryPlace(DeliveryPlace deliveryPlace)
     {
-        for (int i = 0; i < cargos.Length; i++)
-            cargos[i].upPivot.gameObject.SetActive(false);
-
-        ActiveNearCargo();
-
-        GC.Collect();
+        deliveryPlaces[deliveryPlace.listIndex] = null;
+        emptyDeliveryPlaces.Add(deliveryPlace);
     }
-    void ActiveNearCargo()
+
+    void ActivateCargos()
     {
-        float nearDistance = int.MaxValue;
-        Cargo nearCargo = null;
         for (int i = 0; i < cargos.Length; i++)
         {
-            if (cargos[i].available)
-            {
-                if ((cargos[i].Transform.position - transportModule.Transform.position).sqrMagnitude < nearDistance)
-                {
-                    nearDistance = (cargos[i].Transform.position - transportModule.Transform.position).sqrMagnitude;
-                    nearCargo = cargos[i];
-                }
-            }
+            if(!cargos[i].isCarrying && !cargos[i].spawning)
+                cargos[i].DoReceivable();
         }
-        if(nearCargo != null)
-            nearCargo.upPivot.gameObject.SetActive(true);
+    }
+    void DeactivateCargos()
+    {
+        for (int i = 0; i < cargos.Length; i++)
+        {
+            if (!cargos[i].isCarrying && !cargos[i].spawning)
+                cargos[i].DoUnreachable();
+        }
     }
     void DeliveredCargo(Cargo cargo)
     {
-        if(deliveredCargoCount + 1 <= cargosCount)
-        {
-            deliveredCargoCount++;
-            cargoUI?.UpdateDeliveredCargoCount(deliveredCargoCount);
-            cargoUI?.UpdateRemaningCargoCount(remaningCargoCount);
-        }
-        if(deliveredCargoCount == cargosCount)
-        {
-            deliveredCargoCount = cargosCount;
-
-            if (deliveryIsCompleted != null)
-                deliveryIsCompleted.Invoke();
-        }
+        deliveredCargoCount++;
+        cargoUI?.UpdateDeliveredCargoCount(deliveredCargoCount);
 
         Lebug.Log("Delivered Cargo Count", deliveredCargoCount, "Cargo System");
-        Lebug.Log("Remaning Cargo Count", remaningCargoCount, "Cargo System");
 
-        cargoUI?.UpdateDeliveredCargoCount(deliveredCargoCount);
-        cargoUI?.UpdateRemaningCargoCount(remaningCargoCount);
+        SpawnRandomCargo(cargo.startPoint);
 
-        receivedCargoNow.downPivot.gameObject.SetActive(false);
-
-        if(remaningCargoCount != 0)
-            ActiveNearCargo();
+        Destroy(receivedCargoNow.upPivot.gameObject);
+        Destroy(receivedCargoNow.downPivot.gameObject);
 
         receivedCargoNow = null;
+
+        ActivateCargos();
     }
     void ReceivedCargo(Cargo cargo)
     {
         receivedCargoNow = cargo;
 
-        receivedCargoNow.indicator.enabled = false;
+        DeactivateCargos();
 
         Lebug.Log("Received Cargo Now", receivedCargoNow, "Cargo System");
+    }
+    void SpawnRandomCargo(CargoPoint cargoPoint)
+    {
+        Cargo newCargo = null;
+        if (cargoPrefabs.Length > 1)
+        {
+            newCargo = Instantiate(cargoPrefabs[UnityEngine.Random.Range(0, cargoPrefabs.Length)], cargoPoint.transform.position, cargoPoint.transform.rotation).GetComponentInChildren<Cargo>();
+        }
+        else if(cargoPrefabs.Length == 1)
+        {
+            newCargo = Instantiate(cargoPrefabs[0], cargoPoint.transform.position, cargoPoint.transform.rotation).GetComponentInChildren<Cargo>();
+        }
+        if (newCargo)
+        {
+            cargos[receivedCargoNow.listIndex] = newCargo;
+            cargoPoint.cargo = newCargo;
+            newCargo.listIndex = receivedCargoNow.listIndex;
+            newCargo.startPoint = cargoPoint;
+
+            if (emptyDeliveryPlaces.Count > 0)
+            {
+                newCargo.deliveryPlace = emptyDeliveryPlaces[UnityEngine.Random.Range(0, emptyDeliveryPlaces.Count)];
+                newCargo.CalculateDistance();
+                newCargo.deliveryPlace.connectedCargo = true;
+                emptyDeliveryPlaces.Remove(newCargo.deliveryPlace);
+                deliveryPlaces[newCargo.deliveryPlace.listIndex] = newCargo.deliveryPlace;
+            }
+
+            newCargo.upPivot.gameObject.FixNameForClone();
+            newCargo.upPivot.position = cargoPoint.transform.position;
+            newCargo.DoReceivableWithTime(5);
+        }
     }
 }

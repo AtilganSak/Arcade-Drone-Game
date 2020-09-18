@@ -164,8 +164,8 @@ public class BatteryModule : MonoBehaviour
     void UpdateUI()
     {
         droneUI.UpdateBatteryPercentageText(numberArray[(int)batteryPercentage]);
-        if(lifeForMinute >= 0 && lifeForSecond >= 0)
-            droneUI.UpdateRemainingTimeText(numberArray[lifeForMinute], numberArray[lifeForSecond]);
+        //if(lifeForMinute >= 0 && lifeForSecond >= 0)
+        //    droneUI.UpdateRemainingTimeText(numberArray[lifeForMinute], numberArray[lifeForSecond]);
     }
     public void ChargeBattery(float amount)
     {

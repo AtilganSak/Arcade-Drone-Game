@@ -122,7 +122,6 @@ GameObject:
   - component: {fileID: 304996780755470598}
   - component: {fileID: 304996780755470599}
   - component: {fileID: 304996780755470596}
-  - component: {fileID: 304996780755470597}
   - component: {fileID: 1029494649840111666}
   m_Layer: 0
   m_Name: DeliveryPlaceTemplate
@@ -174,36 +173,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4.47, y: 3.8, z: 4.27}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &304996780755470597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 304996780755470594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 101f60312d2a5a7459c0dc767b8aa8f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  drawGizmo: 1
-  wireframe: 1
-  color: {r: 0, g: 1, b: 0, a: 1}
-  colliderType: 0
-  syncType: 1
-  size: {x: 4.47, y: 3.8, z: 4.27}
-  radius: 0.5
-  height: 0
-  showText: 0
-  text: 
-  fontSize: 15
-  fontColor: {r: 0, g: 0, b: 0, a: 1}
-  drawLine: 0
-  lineColor: {r: 0, g: 0, b: 0, a: 1}
-  offset: {x: 0, y: 0, z: 0}
-  noBoxCollider: 0
-  noSphereCollider: 1
-  noCapsuleCollider: 1
 --- !u!114 &1029494649840111666
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,8 +20,6 @@ public class GameManager : MonoBehaviour
     {
         uiManager = FindObjectOfType<UIManager>();
         cargoSystem = FindObjectOfType<CargoSystem>();
-        if (cargoSystem != null)
-            cargoSystem.deliveryIsCompleted += AllCargosDelivered;
 
         drone = FindObjectOfType<DroneController>();
         if (drone != null)
@@ -51,8 +49,6 @@ public class GameManager : MonoBehaviour
         {
             droneBattery.BatteryIsOverEvent.RemoveListener(DroneBatteryIsOver);
         }
-        if (cargoSystem != null)
-            cargoSystem.deliveryIsCompleted -= AllCargosDelivered;
     }
     public void StartGame()
     {
@@ -70,7 +66,7 @@ public class GameManager : MonoBehaviour
 
         StopTime();
     }
-    public void FinishGame(bool won)
+    public void FinishGame()
     {
         gameState = GameState.Stop;
 
@@ -83,11 +79,7 @@ public class GameManager : MonoBehaviour
 
     void DroneBatteryIsOver()
     {
-        FinishGame(false);
-    }
-    void AllCargosDelivered()
-    {
-        FinishGame(true);
+        FinishGame();
     }
     void StopTime()
     {

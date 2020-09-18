@@ -6,27 +6,30 @@ public class DeliveryPlace : MonoBehaviour
 
     public GameObject visual;
 
-    public bool cargoIsHere { get; private set; }
+    public bool connectedCargo { get; set; }
 
-    public Cargo cargo { get; private set; }
+    public int listIndex { get; set; }
 
     bool isActive;
 
     Target indicator;
-
+    CargoSystem cargoSystem;
     Transform c_Transform;
     Collider collider;
 
     private void OnEnable()
     {
         indicator = GetComponent<Target>();
-        
-        c_Transform = transform;
-
         collider = GetComponent<Collider>();
+        cargoSystem = FindObjectOfType<CargoSystem>();
+
+        c_Transform = transform;
     }
     private void Start()
     {
+        if (!connectedCargo)
+            cargoSystem.AddEmptyDeliveryPlace(this);
+
         Deactivate();
     }
     public void Activate()
@@ -51,10 +54,15 @@ public class DeliveryPlace : MonoBehaviour
     }
     public void DeliveredCargo(Cargo cargo)
     {
-        this.cargo = cargo;
-        cargoIsHere = true;
+        connectedCargo = false;
+
+        Invoke("Spawned", 5);
 
         Deactivate();
+    }
+    void Spawned()
+    {
+        cargoSystem.AddEmptyDeliveryPlace(this);
     }
     private void OnTriggerEnter(Collider other)
     {
