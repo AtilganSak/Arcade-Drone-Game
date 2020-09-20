@@ -141,6 +141,8 @@ public class CargoSystem : MonoBehaviour
             newCargo.DoReceivableWithTime(5);
         }
     }
+
+#if UNITY_EDITOR
     float nearDistance = 9999999F;
     float farDistance = 0F;
     private void OnDrawGizmos()
@@ -152,13 +154,12 @@ public class CargoSystem : MonoBehaviour
                 for (int i = 0; i < cargos.Length; i++)
                 {
                     Gizmos.color = Color.white;
-                    Handles.color = Color.white;
                     if (Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position) <= nearDistance)
                     {
                         nearDistance = Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position);
                         Gizmos.color = Color.green;
                     }
-                    else if(Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position) >= farDistance)
+                    else if (Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position) >= farDistance)
                     {
                         farDistance = Vector3.Distance(cargos[i].transform.position, cargos[i].deliveryPlace.transform.position);
                         Gizmos.color = Color.red;
@@ -171,4 +172,5 @@ public class CargoSystem : MonoBehaviour
             }
         }
     }
+#endif
 }

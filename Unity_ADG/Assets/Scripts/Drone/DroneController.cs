@@ -14,7 +14,7 @@ public class DroneController : MonoBehaviour
     public float rotationSpeed = 5;
     [Tooltip("Speed ​​of transition between two animations.")]
     public float blendSpeed = 2;
-
+    [Tooltip("Joysticks dead zone.")]
     public float kEpsilon = 0.1F;
 
     public bool FOVEffect = true;
