@@ -15,21 +15,21 @@ MonoBehaviour:
   bank:
   - min: 0
     max: 110
-    amount: 300
+    amount: 30
     color: {r: 0.9163678, g: 1, b: 0.24056602, a: 1}
   - min: 111
     max: 150
-    amount: 500
+    amount: 70
     color: {r: 1, g: 0.60246325, b: 0.1745283, a: 1}
   - min: 151
     max: 220
-    amount: 700
+    amount: 110
     color: {r: 0.990566, g: 0.2756764, b: 0.2756764, a: 1}
   - min: 221
     max: 300
-    amount: 1500
+    amount: 150
     color: {r: 1, g: 0, b: 0.29948568, a: 1}
   - min: 301
     max: 370
-    amount: 2100
+    amount: 175
     color: {r: 1, g: 0, b: 0.72496986, a: 1}

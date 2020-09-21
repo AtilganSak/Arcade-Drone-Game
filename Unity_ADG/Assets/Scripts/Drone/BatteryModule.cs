@@ -152,7 +152,7 @@ public class BatteryModule : MonoBehaviour
         {
             occupancyState = OccupancyState.Bad;
         }
-        else if (currentBattery >= 0 && currentBattery < powerCutThreshold)
+        else if (currentBattery >= 0 && currentBattery <= powerCutThreshold)
         {
             occupancyState = OccupancyState.Over;
 

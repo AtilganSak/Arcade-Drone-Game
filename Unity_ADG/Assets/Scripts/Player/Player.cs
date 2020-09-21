@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
 {
     public int money;
 
+    public bool saveMoney;
+
     PlayerUI playerUI;
 
     const string PLAYER_MONEY = "PlayerMoney";
@@ -16,8 +18,11 @@ public class Player : MonoBehaviour
         playerUI = FindObjectOfType<PlayerUI>();
         if (playerUI == null) enabled = false;
 
-        if (PlayerPrefs.HasKey(PLAYER_MONEY))
-            money = PlayerPrefs.GetInt(PLAYER_MONEY);
+        if (saveMoney)
+        {
+            if (PlayerPrefs.HasKey(PLAYER_MONEY))
+                money = PlayerPrefs.GetInt(PLAYER_MONEY);
+        }
 
         UpdateUI();
     }
@@ -25,7 +30,8 @@ public class Player : MonoBehaviour
     {
         money += amount;
 
-        PlayerPrefs.SetInt(PLAYER_MONEY, money);
+        if(saveMoney)
+            PlayerPrefs.SetInt(PLAYER_MONEY, money);
 
         UpdateUI();
     }
