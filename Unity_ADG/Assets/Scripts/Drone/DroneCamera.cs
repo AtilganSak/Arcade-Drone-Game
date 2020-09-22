@@ -38,6 +38,9 @@ public class DroneCamera : MonoBehaviour
     public float minZoomDistance = .6f;
     public float zoomDampening = 10;
 
+    public Vector3 minZoomPosition;
+    public Vector3 maxZoomPosition;
+
     public InputField zoomRateField;
     public InputField zoomDampingField;
     public InputField minDisField;
@@ -47,6 +50,7 @@ public class DroneCamera : MonoBehaviour
     float yDeg;
     float counter;
     float currentDistance;
+    float distancePercentage;
     float desiredDistance;
 
     bool returnBack;
@@ -270,8 +274,13 @@ public class DroneCamera : MonoBehaviour
                 // For smoothing of the zoom, lerp distance
                 currentDistance = Mathf.Lerp(currentDistance, desiredDistance, Time.deltaTime * zoomDampening);
 
-                position = c_Transform.position - (cameraTransform.rotation * Vector3.forward * currentDistance);
-                cameraTransform.position = Vector3.Lerp(cameraTransform.position, position, Time.deltaTime * zoomDampening);
+                //position = c_Transform.position - (cameraTransform.rotation * Vector3.forward * currentDistance);
+
+                distancePercentage = Mathf.InverseLerp(minZoomDistance, maxZoomDistance, currentDistance);
+
+                position = Vector3.Lerp(minZoomPosition, maxZoomPosition, distancePercentage);
+
+                cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, position, Time.deltaTime * zoomDampening);
             }
         }
         #endregion
@@ -294,6 +303,13 @@ public class DroneCamera : MonoBehaviour
     {
         if (showScreenLimit)
             GUI.Box(new Rect(0, Screen.height / 2 + touchableYLimitOffset, Screen.width, 10), "Box");
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(transform.TransformPoint(minZoomPosition), 0.2f);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(transform.TransformPoint(maxZoomPosition), 0.2f);
     }
 #endif
 }

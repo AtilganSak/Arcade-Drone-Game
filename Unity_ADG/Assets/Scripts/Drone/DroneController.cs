@@ -1,5 +1,4 @@
-﻿using Cinemachine;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DroneController : MonoBehaviour
 {

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 public class CargoSystem : MonoBehaviour
 {
@@ -12,6 +10,7 @@ public class CargoSystem : MonoBehaviour
     public GameObject[] cargoPrefabs;
     public int deliveredCargoCount { get; private set; }
     public Cargo receivedCargoNow { get; private set; }
+    public bool isReceivedCargo { get; private set; }
 
     CargoUI cargoUI;
     TransportModule transportModule;
@@ -98,12 +97,14 @@ public class CargoSystem : MonoBehaviour
         Destroy(receivedCargoNow.downPivot.gameObject);
 
         receivedCargoNow = null;
+        isReceivedCargo = false;
 
         ActivateCargos();
     }
     void ReceivedCargo(Cargo cargo)
     {
         receivedCargoNow = cargo;
+        isReceivedCargo = true;
 
         DeactivateCargos();
 

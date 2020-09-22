@@ -4076,11 +4076,14 @@ MonoBehaviour:
   zoomRate: 1
   maxZoomDistance: 10
   minZoomDistance: 3
-  zoomDampening: 4
+  zoomDampening: 10
+  minZoomPosition: {x: 0, y: 2.03, z: -4.54}
+  maxZoomPosition: {x: 0, y: 3.84, z: -7.43}
   zoomRateField: {fileID: 0}
   zoomDampingField: {fileID: 0}
   minDisField: {fileID: 0}
   maxDisField: {fileID: 0}
+  desiredDistance: 0
 --- !u!1 &2971949920719787789
 GameObject:
   m_ObjectHideFlags: 0
@@ -4151,7 +4154,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4888579956381283943, guid: 473cf4644351aa74ab7322a928e96182, type: 3}
       propertyPath: m_RootOrder
-      value: 17
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 4888579956381283943, guid: 473cf4644351aa74ab7322a928e96182, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4252,7 +4255,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4152107666968198040, guid: 563090ae2f4000b49803eaf1fbc18592, type: 3}
       propertyPath: m_RootOrder
-      value: 16
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 4152107666968198040, guid: 563090ae2f4000b49803eaf1fbc18592, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

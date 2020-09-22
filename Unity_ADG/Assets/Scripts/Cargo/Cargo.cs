@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 public class Cargo : MonoBehaviour
@@ -34,25 +32,20 @@ public class Cargo : MonoBehaviour
     float waitTime;
 
     Player player;
+    CargoSystem cargoSystem;
     MeshRenderer meshRenderer;
     RaycastHit rayCastHit;
-    WaitForSeconds forSeconds;
     MoneyManager moneyManager;
-
-    Camera camera;
 
     private void OnEnable()
     {
-        camera = Camera.main;
-
         Transform = transform;
         GameObject = gameObject;
         Collider = GetComponent<Collider>();
         meshRenderer = GetComponent<MeshRenderer>();
+        cargoSystem = FindObjectOfType<CargoSystem>();
         moneyManager = FindObjectOfType<MoneyManager>();
         player = FindObjectOfType<Player>();
-
-        forSeconds = new WaitForSeconds(0.5F);
 
         upPivot = Transform.root;
         downPivot = upPivot.GetChild(0);
@@ -94,15 +87,21 @@ public class Cargo : MonoBehaviour
     }
     public void DoReceivable()
     {
-        receivable = true;
+        if (!cargoSystem.isReceivedCargo)
+        {
+            receivable = true;
 
-        indicators.SetActive(true);
+            indicators.SetActive(true);
+        }
     }
     public void DoUnreachable()
     {
-        receivable = false;
+        if (!spawning)
+        {
+            receivable = false;
 
-        indicators.SetActive(false);
+            indicators.SetActive(false);
+        }
     }
     public void DoReceivableWithTime(float time)
     {
