@@ -4,7 +4,7 @@ public class MoneyManager : MonoBehaviour
 {
     public MoneyMachine moneyMachine;
 
-    public int GiveMoney(float distance)
+    public MoneyMachine.Money? GiveMoney(float distance)
     {
         if (moneyMachine.bank.Length > 0)
         {
@@ -12,10 +12,10 @@ public class MoneyManager : MonoBehaviour
             {
                 if (distance >= moneyMachine.bank[i].min && distance <= moneyMachine.bank[i].max)
                 {
-                    return moneyMachine.bank[i].amount;
+                    return moneyMachine.bank[i];
                 }
             }
         }
-        return 0;
+        return null;
     }
 }

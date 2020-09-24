@@ -10,11 +10,14 @@ using UnityEngine;
 [DefaultExecutionOrder(-1)]
 public class OffScreenIndicator : MonoBehaviour
 {
+    public bool drawIndicators = true;
+
     [Range(0.5f, 0.9f)]
     [Tooltip("Distance offset of the indicators from the centre of the screen")]
     [SerializeField] private float screenBoundOffset = 0.9f;
 
     private Camera mainCamera;
+    private Transform mainCameraTransform;
     private Vector3 screenCentre;
     private Vector3 screenBounds;
 
@@ -25,6 +28,7 @@ public class OffScreenIndicator : MonoBehaviour
     void Awake()
     {
         mainCamera = Camera.main;
+        mainCameraTransform = mainCamera.transform;
         screenCentre = new Vector3(Screen.width, Screen.height, 0) / 2;
         screenBounds = screenCentre * screenBoundOffset;
         TargetStateChanged += HandleTargetStateChanged;
@@ -32,9 +36,12 @@ public class OffScreenIndicator : MonoBehaviour
 
     void LateUpdate()
     {
-        DrawIndicators();
+        if(drawIndicators)
+            DrawIndicators();
     }
 
+    Vector3 screenPosition;
+    Indicator indicator;
     /// <summary>
     /// Draw the indicators on the screen and set thier position and rotation and other properties.
     /// </summary>
@@ -42,28 +49,28 @@ public class OffScreenIndicator : MonoBehaviour
     {
         foreach(Target target in targets)
         {
-            Vector3 screenPosition = OffScreenIndicatorCore.GetScreenPosition(mainCamera, target.transform.position);
+            screenPosition = OffScreenIndicatorCore.GetScreenPosition(mainCamera, target.c_Transform.position);
             bool isTargetVisible = OffScreenIndicatorCore.IsTargetVisible(screenPosition);
-            float distanceFromCamera = target.NeedDistanceText ? target.GetDistanceFromCamera(mainCamera.transform.position) : float.MinValue;// Gets the target distance from the camera.
-            Indicator indicator = null;
+            float distanceFromCamera = target.NeedDistanceText ? target.GetDistanceFromCamera(mainCameraTransform.position) : float.MinValue;// Gets the target distance from the camera.
+            indicator = null;
 
-            if(target.NeedBoxIndicator && isTargetVisible)
+            if (target.NeedBoxIndicator && isTargetVisible)
             {
                 screenPosition.z = 0;
                 indicator = GetIndicator(ref target.indicator, IndicatorType.BOX); // Gets the box indicator from the pool.
             }
-            else if(target.NeedArrowIndicator && !isTargetVisible)
+            else if (target.NeedArrowIndicator && !isTargetVisible)
             {
                 float angle = float.MinValue;
                 OffScreenIndicatorCore.GetArrowIndicatorPositionAndAngle(ref screenPosition, ref angle, screenCentre, screenBounds);
                 indicator = GetIndicator(ref target.indicator, IndicatorType.ARROW); // Gets the arrow indicator from the pool.
-                indicator.transform.rotation = Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg); // Sets the rotation for the arrow indicator.
+                indicator.c_Transform.rotation = Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg); // Sets the rotation for the arrow indicator.
             }
-            if(indicator)
+            if (indicator)
             {
                 indicator.SetImageColor(target.TargetColor);// Sets the image color of the indicator.
                 indicator.SetDistanceText(distanceFromCamera); //Set the distance text for the indicator.
-                indicator.transform.position = screenPosition; //Sets the position of the indicator on the screen.
+                indicator.c_Transform.position = screenPosition; //Sets the position of the indicator on the screen.
                 indicator.SetTextRotation(Quaternion.identity); // Sets the rotation of the distance text of the indicator.
             }
         }

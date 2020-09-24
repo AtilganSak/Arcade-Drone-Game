@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class NeighborFollow: MonoBehaviour
 {
@@ -14,11 +12,12 @@ public class NeighborFollow: MonoBehaviour
     private void Start()
     {
         c_Transform = transform;
-    }
-    private void Update()
-    {
-        c_Transform.position = Vector3.Lerp(c_Transform.position, target.position, Time.deltaTime * positionFollowSpeed);
 
-        c_Transform.rotation = Quaternion.Slerp(c_Transform.rotation, target.rotation, Time.deltaTime * rotationFollowSpeed);
+    }
+    private void FixedUpdate()
+    {
+        c_Transform.position = Vector3.Lerp(c_Transform.position, target.position, Time.smoothDeltaTime * positionFollowSpeed);
+
+        c_Transform.rotation = Quaternion.Slerp(c_Transform.rotation, target.rotation, Time.smoothDeltaTime * rotationFollowSpeed);
     }
 }

@@ -12,14 +12,14 @@ public class DeliveryPlace : MonoBehaviour
 
     bool isActive;
 
-    Target indicator;
+    //Target indicator;
     CargoSystem cargoSystem;
     Transform c_Transform;
     Collider collider;
 
     private void OnEnable()
     {
-        indicator = GetComponent<Target>();
+        //indicator = GetComponent<Target>();
         collider = GetComponent<Collider>();
         cargoSystem = FindObjectOfType<CargoSystem>();
 
@@ -38,7 +38,7 @@ public class DeliveryPlace : MonoBehaviour
 
         visual.SetActive(true);
 
-        indicator.enabled = true;
+        //indicator.enabled = true;
 
         isActive = true;
     }
@@ -48,7 +48,7 @@ public class DeliveryPlace : MonoBehaviour
 
         visual.SetActive(false);
 
-        indicator.enabled = false;
+        //indicator.enabled = false;
 
         isActive = false;
     }

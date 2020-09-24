@@ -32,6 +32,7 @@ class ArrowObjectPool : MonoBehaviour
         }
     }
 
+    Indicator arrow;
     /// <summary>
     /// Gets pooled objects from the pool.
     /// </summary>
@@ -47,8 +48,8 @@ class ArrowObjectPool : MonoBehaviour
         }
         if (willGrow)
         {
-            Indicator arrow = Instantiate(pooledObject);
-            arrow.transform.SetParent(transform, false);
+            arrow = Instantiate(pooledObject);
+            arrow.c_Transform.SetParent(transform, false);
             arrow.Activate(false);
             pooledObjects.Add(arrow);
             return arrow;

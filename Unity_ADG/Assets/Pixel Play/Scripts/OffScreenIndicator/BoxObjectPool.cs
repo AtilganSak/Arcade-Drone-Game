@@ -26,7 +26,7 @@ public class BoxObjectPool : MonoBehaviour
         for (int i = 0; i < pooledAmount; i++)
         {
             Indicator box = Instantiate(pooledObject);
-            box.transform.SetParent(transform, false);
+            box.c_Transform.SetParent(transform, false);
             box.Activate(false);
             pooledObjects.Add(box);
         }
@@ -48,7 +48,7 @@ public class BoxObjectPool : MonoBehaviour
         if (willGrow)
         {
             Indicator box = Instantiate(pooledObject);
-            box.transform.SetParent(transform, false);
+            box.c_Transform.SetParent(transform, false);
             box.Activate(false);
             pooledObjects.Add(box);
             return box;

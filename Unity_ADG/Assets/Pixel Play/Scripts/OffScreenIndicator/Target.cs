@@ -25,6 +25,8 @@ public class Target : MonoBehaviour
     /// </summary>
     [HideInInspector] public Indicator indicator;
 
+    public Transform c_Transform { get; private set; }
+
     /// <summary>
     /// Gets the color for the target indicator.
     /// </summary>
@@ -74,7 +76,9 @@ public class Target : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
-        if(OffScreenIndicator.TargetStateChanged != null)
+        c_Transform = transform;
+
+        if (OffScreenIndicator.TargetStateChanged != null)
         {
             OffScreenIndicator.TargetStateChanged.Invoke(this, true);
         }
@@ -98,7 +102,7 @@ public class Target : MonoBehaviour
     /// <returns></returns>
     public float GetDistanceFromCamera(Vector3 cameraPosition)
     {
-        float distanceFromCamera = Vector3.Distance(cameraPosition, transform.position);
+        float distanceFromCamera = (cameraPosition - c_Transform.position).sqrMagnitude;
         return distanceFromCamera;
     }
 }

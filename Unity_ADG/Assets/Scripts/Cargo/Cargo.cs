@@ -8,12 +8,11 @@ public class Cargo : MonoBehaviour
     public DeliveryPlace deliveryPlace;
 
     public GameObject indicators;
-
-    public TMP_Text distanceText;
+    public SpriteRenderer arrowSprite;
 
     public bool isCarrying { get; private set; }
 
-    public CargoPoint startPoint;
+    public CargoPoint startPoint { get; set; }
     public Transform Transform { get; private set; }
     public Collider Collider { get; private set; }
     public GameObject GameObject { get; private set; }
@@ -152,12 +151,12 @@ public class Cargo : MonoBehaviour
     public void CalculateDistance()
     {
         distance = Mathf.RoundToInt(Vector3.Distance(Transform.position, deliveryPlace.transform.position));
-        if (deliveryPlace != null)
-            distanceText.text = distance.ToString();
-        else
-            distanceText.gameObject.SetActive(false);
-
-        earnedMoney = moneyManager.GiveMoney(distance);
+        MoneyMachine.Money? money = moneyManager.GiveMoney(distance);
+        if (money != null)
+        {
+            earnedMoney = money.Value.amount; 
+            arrowSprite.color = money.Value.color;
+        }
     }
     void FixTransformBySurface()
     {

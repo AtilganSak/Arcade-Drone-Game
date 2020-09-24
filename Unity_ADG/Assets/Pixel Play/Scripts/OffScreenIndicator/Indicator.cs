@@ -10,6 +10,12 @@ public class Indicator : MonoBehaviour
     private Image indicatorImage;
     private Text distanceText;
 
+    public Transform c_Transform { get;set; }
+
+    private void OnEnable()
+    {
+        c_Transform = transform;
+    }
     /// <summary>
     /// Gets if the game object is active in hierarchy.
     /// </summary>

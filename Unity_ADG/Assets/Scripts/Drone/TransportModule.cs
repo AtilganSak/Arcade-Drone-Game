@@ -6,6 +6,7 @@ public class TransportModule : MonoBehaviour
     public bool enable = true;
 
     public Transform snapPoint;
+    public LookAt indicatorArrow;
 
     public AudioClip receivedCargoSound;
     public AudioClip deliveredCargoSound;
@@ -20,6 +21,7 @@ public class TransportModule : MonoBehaviour
 
     AudioSource audioSource;
 
+    GameObject indicatorArrowBody;
     Transform c_Transform;
     public  Transform Transform
     {
@@ -33,6 +35,11 @@ public class TransportModule : MonoBehaviour
 
     private void OnEnable()
     {
+        if (indicatorArrow)
+        {
+            indicatorArrowBody = indicatorArrow.transform.GetChild(0).gameObject;
+            indicatorArrowBody.SetActive(false);
+        }
         c_Transform = transform;
         audioSource = GetComponent<AudioSource>();
     }
@@ -59,6 +66,9 @@ public class TransportModule : MonoBehaviour
 
         Cargo.Received();
 
+        indicatorArrow.target = cargo.deliveryPlace.transform;
+        indicatorArrowBody.SetActive(true);
+
         if (receivedCargoSound)
             audioSource.PlayOneShot(receivedCargoSound);
 
@@ -75,6 +85,8 @@ public class TransportModule : MonoBehaviour
             Cargo.SnapDeliveryPlace(dropPoint);
 
             Cargo.Delivered();
+
+            indicatorArrowBody.SetActive(false);
 
             if (deliveredCargoSound)
                 audioSource.PlayOneShot(deliveredCargoSound);

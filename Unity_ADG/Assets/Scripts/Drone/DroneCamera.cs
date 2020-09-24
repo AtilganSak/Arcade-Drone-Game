@@ -299,11 +299,11 @@ public class DroneCamera : MonoBehaviour
             yDeg = yMaxLimit;
     }
 #if UNITY_EDITOR
-    private void OnGUI()
-    {
-        if (showScreenLimit)
-            GUI.Box(new Rect(0, Screen.height / 2 + touchableYLimitOffset, Screen.width, 10), "Box");
-    }
+    //private void OnGUI()
+    //{
+    //    if (showScreenLimit)
+    //        GUI.Box(new Rect(0, Screen.height / 2 + touchableYLimitOffset, Screen.width, 10), "Box");
+    //}
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;

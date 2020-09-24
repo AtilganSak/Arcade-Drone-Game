@@ -63,9 +63,9 @@ public class DroneController : MonoBehaviour
     {
         if (!isActive) return;
 
-        Debug();
+        //Debug();
 
-        GetInputs();
+        
 
         //SetAnimation();
 
@@ -77,6 +77,8 @@ public class DroneController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        GetInputs();
+
         Move();
 
         Rotation();
@@ -128,26 +130,26 @@ public class DroneController : MonoBehaviour
 
         if (ThrustInput > 0)
         {
-            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, desireFOVAmount, Time.deltaTime * transitionFOVSmooth);
+            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, desireFOVAmount, Time.smoothDeltaTime * transitionFOVSmooth);
         }
         else
         {
-            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, baseCameraFOV, Time.deltaTime * transitionFOVSmooth);
+            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, baseCameraFOV, Time.smoothDeltaTime * transitionFOVSmooth);
         }
     }
     void SetAnimation()
     {
-        anim.SetFloat("Vertical", Mathf.Clamp(Mathf.Lerp(verticalAnim, ThrustInput, blendSpeed * Time.deltaTime), -1, 1));
-        anim.SetFloat("Horizontal", Mathf.Clamp(Mathf.Lerp(horizontalAnim, TiltInput, blendSpeed * Time.deltaTime), -1, 1));
-        anim.SetFloat("Rotate", Mathf.Clamp(Mathf.Lerp(rotateAnim, RotateInput, blendSpeed * Time.deltaTime), -1, 1));
+        anim.SetFloat("Vertical", Mathf.Clamp(Mathf.Lerp(verticalAnim, ThrustInput, blendSpeed * Time.smoothDeltaTime), -1, 1));
+        anim.SetFloat("Horizontal", Mathf.Clamp(Mathf.Lerp(horizontalAnim, TiltInput, blendSpeed * Time.smoothDeltaTime), -1, 1));
+        anim.SetFloat("Rotate", Mathf.Clamp(Mathf.Lerp(rotateAnim, RotateInput, blendSpeed * Time.smoothDeltaTime), -1, 1));
     }
     void Move()
     {
-        rigidbody.AddRelativeForce(TiltInput * movement * Time.fixedDeltaTime, LiftInput * lift * Time.fixedDeltaTime, ThrustInput * movement * Time.fixedDeltaTime, forceMode);
+        rigidbody.AddRelativeForce(TiltInput * movement * Time.smoothDeltaTime, LiftInput * lift * Time.smoothDeltaTime, ThrustInput * movement * Time.smoothDeltaTime, forceMode);
     }
     void Rotation()
     {
-        deltaRotation = Quaternion.Euler(0, RotateInput * Time.fixedDeltaTime * rotationSpeed, 0);
+        deltaRotation = Quaternion.Euler(0, RotateInput * Time.smoothDeltaTime * rotationSpeed, 0);
         rigidbody.MoveRotation(rigidbody.rotation * deltaRotation);
     }
     void CalculateAltitude()
