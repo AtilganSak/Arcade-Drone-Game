@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Plugins/Mobile City Pack/DemoScene.unity
+    guid: dba41ccf5972506439cef833ee1ce603
+  - enabled: 1
     path: Assets/Scenes/GamePlayTestScene.unity
     guid: 241623144bef7f843854b0b5e53b20a6
   - enabled: 1
