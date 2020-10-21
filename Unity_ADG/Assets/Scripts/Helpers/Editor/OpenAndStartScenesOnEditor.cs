@@ -18,6 +18,8 @@ public class OpenAndStartScenesOnEditor
     public static void OpenDemoTestScene() => OpenScene("Demo_Test_Scene");
     [MenuItem("Tools/Open Scene/Gameplay Test")]
     public static void OpenGameplayTestScene() => OpenScene("GamePlayTestScene");
+    [MenuItem("Tools/Open Scene/City")]
+    public static void OpenCityScene() => OpenScene("City");
 
     //FUNCTIONS
     private static bool OpenScene(string scene)

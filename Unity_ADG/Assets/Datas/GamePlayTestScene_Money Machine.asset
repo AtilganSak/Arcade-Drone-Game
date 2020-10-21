@@ -33,3 +33,7 @@ MonoBehaviour:
     max: 370
     amount: 175
     color: {r: 1, g: 0, b: 0.72496986, a: 1}
+  - min: 371
+    max: 480
+    amount: 200
+    color: {r: 0.4048233, g: 0, b: 1, a: 1}

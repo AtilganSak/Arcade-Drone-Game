@@ -48,9 +48,6 @@ public class Cargo : MonoBehaviour
 
         upPivot = Transform.root;
         downPivot = upPivot.GetChild(0);
-
-        if (deliveryPlace)
-            deliveryPlace.connectedCargo = true;
     }
     private void Start()
     {

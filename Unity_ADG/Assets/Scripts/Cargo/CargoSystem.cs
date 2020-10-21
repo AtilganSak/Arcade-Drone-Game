@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,16 +20,6 @@ public class CargoSystem : MonoBehaviour
     DeliveryPlace[] deliveryPlaces;
     List<DeliveryPlace> emptyDeliveryPlaces;
 
-    private void OnValidate()
-    {
-        if (showDistances)
-        {
-            if (cargos.Length == 0)
-            {
-                cargos = FindObjectsOfType<Cargo>();
-            }
-        }
-    }
     private void OnEnable()
     {
         cargoUI = FindObjectOfType<CargoUI>();
@@ -46,6 +37,10 @@ public class CargoSystem : MonoBehaviour
             deliveryPlaces[i].listIndex = i;
         for (int i = 0; i < cargos.Length; i++)
             cargos[i].listIndex = i;
+
+        AttachCargosWithDeliveryPlace();
+
+        GenerateCargoPoints();
 
         emptyDeliveryPlaces = new List<DeliveryPlace>(deliveryPlaces.Length);
 
@@ -89,8 +84,6 @@ public class CargoSystem : MonoBehaviour
         deliveredCargoCount++;
         cargoUI?.UpdateDeliveredCargoCount(deliveredCargoCount);
 
-        Lebug.Log("Delivered Cargo Count", deliveredCargoCount, "Cargo System");
-
         SpawnRandomCargo(cargo.startPoint);
 
         Destroy(receivedCargoNow.upPivot.gameObject);
@@ -107,8 +100,6 @@ public class CargoSystem : MonoBehaviour
         isReceivedCargo = true;
 
         DeactivateCargos();
-
-        Lebug.Log("Received Cargo Now", receivedCargoNow, "Cargo System");
     }
     void SpawnRandomCargo(CargoPoint cargoPoint)
     {
@@ -142,13 +133,36 @@ public class CargoSystem : MonoBehaviour
             newCargo.DoReceivableWithTime(5);
         }
     }
+    void AttachCargosWithDeliveryPlace()
+    {
+        List<DeliveryPlace> temp = deliveryPlaces.ToList();
+        for (int i = 0; i < cargos.Length; i++)
+        {
+            int rndNumber = UnityEngine.Random.Range(0, temp.Count);
+            cargos[i].deliveryPlace = temp[rndNumber];
+            cargos[i].deliveryPlace.connectedCargo = true;
+            temp.RemoveAt(rndNumber);
+            if (temp.Count == 0)
+                break;
+        }
+    }
+    void GenerateCargoPoints()
+    {
+        for (int i = 0; i < cargos.Length; i++)
+        {
+            CargoPoint cargoPoint = new GameObject("CargoPoint -" + i).AddComponent<CargoPoint>();
+            cargoPoint.transform.position = cargos[i].transform.position;
+            cargoPoint.transform.SetSiblingIndex(cargos[i].transform.GetSiblingIndex());
+            cargoPoint.cargo = cargos[i];
+        }
+    }
 
 #if UNITY_EDITOR
     float nearDistance = 9999999F;
     float farDistance = 0F;
     private void OnDrawGizmos()
     {
-        if (showDistances)
+        if (showDistances && Application.isPlaying)
         {
             if (cargos.Length > 0)
             {
