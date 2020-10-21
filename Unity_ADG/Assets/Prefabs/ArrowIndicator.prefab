@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  lockY: 1
+  lockY: 0
   lockX: 0
   lockZ: 0
 --- !u!114 &7565910270947864731

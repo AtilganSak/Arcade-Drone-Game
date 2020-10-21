@@ -65,8 +65,6 @@ public class DroneController : MonoBehaviour
 
         //Debug();
 
-        
-
         //SetAnimation();
 
         CameraFOVEffect();
