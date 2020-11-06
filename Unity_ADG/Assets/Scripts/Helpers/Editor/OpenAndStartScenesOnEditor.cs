@@ -20,6 +20,8 @@ public class OpenAndStartScenesOnEditor
     public static void OpenGameplayTestScene() => OpenScene("GamePlayTestScene");
     [MenuItem("Tools/Open Scene/City")]
     public static void OpenCityScene() => OpenScene("City");
+    [MenuItem("Tools/Open Scene/PathTestScene")]
+    public static void OpenPathTestScene() => OpenScene("PathTestScene");
 
     //FUNCTIONS
     private static bool OpenScene(string scene)
