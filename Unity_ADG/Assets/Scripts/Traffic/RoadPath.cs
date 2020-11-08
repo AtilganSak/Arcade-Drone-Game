@@ -36,7 +36,7 @@ public class RoadPath : MonoBehaviour
             {
                 new RoadPath.Point
                 {
-                    position = Vector3.zero
+                    position = Vector3.zero,
                 }
             };
     }
@@ -258,13 +258,29 @@ public class RoadPathEditor : Editor
                 if (i == selectedPointIndex)
                 {
                     Vector3 point = script.points[i].position;
+                    Quaternion rotation = Quaternion.identity;
+                    if (Tools.pivotRotation == PivotRotation.Global)
+                    {
+                        rotation = Tools.handleRotation;
+                    }
+                    else
+                    {
+                        if (i + 1 < script.points.Length)
+                            rotation = Quaternion.LookRotation(script.points[i + 1].position - script.points[i].position);
+                        else
+                        {
+                            if (script.points.Length > 1)
+                                rotation = Quaternion.LookRotation(script.points[script.points.Length - 1].position - script.points[script.points.Length - 2].position);
+                        }
+                    }
+
                     EditorGUI.BeginChangeCheck();
-                    point = Handles.PositionHandle(point, Quaternion.identity);
+                    point = Handles.PositionHandle(point, rotation);
                     if (EditorGUI.EndChangeCheck())
                     {
                         Undo.RecordObject(script, "Move Point");
                         EditorUtility.SetDirty(script);
-                        script.points[i].position = point/*script.transform.InverseTransformPoint(point)*/;
+                        script.points[i].position = point;
                     }
                 }
                 else
@@ -286,7 +302,7 @@ public class RoadPathEditor : Editor
                         if (script.points.Length > 1)
                             direction = script.points[0].position - script.points[1].position;
                         Vector3 firstButtonPos = script.points[0].position + direction.normalized * (script.size + 1);
-                        if (Handles.Button(firstButtonPos/*script.transform.TransformPoint(firstButtonPos)*/, Quaternion.identity, script.size, script.size, Handles.SphereHandleCap))
+                        if (Handles.Button(firstButtonPos, Quaternion.identity, script.size, script.size, Handles.SphereHandleCap))
                         {
                             AddPointToFirst(firstButtonPos);
                         }
@@ -295,7 +311,7 @@ public class RoadPathEditor : Editor
                     {
                         Vector3 direction = script.points[script.points.Length - 1].position - script.points[script.points.Length - 2].position;
                         Vector3 lastButtonPos = script.points[script.points.Length - 1].position + direction.normalized * (script.size + 1);
-                        if (Handles.Button(lastButtonPos/*script.transform.TransformPoint(lastButtonPos)*/, Quaternion.identity, script.size, script.size, Handles.SphereHandleCap))
+                        if (Handles.Button(lastButtonPos, Quaternion.identity, script.size, script.size, Handles.SphereHandleCap))
                         {
                             AddPointToEnd(lastButtonPos);
                         }
@@ -309,8 +325,7 @@ public class RoadPathEditor : Editor
     {
         Undo.RecordObject(script, "Addet Point to First");
         List<RoadPath.Point> tmpList = script.points.ToList();
-        RoadPath.Point newPoint = new RoadPath.Point();
-        tmpList.Insert(0, new RoadPath.Point { position = firstButtonPos });
+        tmpList.Insert(0, new RoadPath.Point { position = firstButtonPos});
         script.points = tmpList.ToArray();
         if (selectedPointIndex != -1)
             selectedPointIndex = 0;
@@ -319,7 +334,7 @@ public class RoadPathEditor : Editor
     {
         Undo.RecordObject(script, "Addet Point to End");
         List<RoadPath.Point> tmpList = script.points.ToList();
-        tmpList.Add(new RoadPath.Point { position = lastButtonPos });
+        tmpList.Add(new RoadPath.Point { position = lastButtonPos});
         script.points = tmpList.ToArray();
         if (selectedPointIndex != -1)
             selectedPointIndex = script.points.Length - 1;
