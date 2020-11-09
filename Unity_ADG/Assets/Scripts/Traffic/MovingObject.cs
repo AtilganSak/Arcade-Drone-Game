@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.ComponentModel;
+using UnityEditor;
+using UnityEngine;
 
 public class MovingObject : MonoBehaviour
 {
@@ -9,8 +11,10 @@ public class MovingObject : MonoBehaviour
     public float movingSpeed = 10;
     public float rotationSpeed = 100;
     public float reachDistance = 0.5F;
-    public float xOffset;
-    public bool clampOffset; 
+    public bool useOffset;
+    public float offsetValue;
+    public bool circleRandomize;
+    public bool clampOffset;
 
     public bool reverseFollow;
 
@@ -64,19 +68,32 @@ public class MovingObject : MonoBehaviour
     {
         VirtualOnDestroy();
     }
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Vector3 rightPos = transform.position + transform.right * xOffset;
-        Vector3 leftPos = transform.position - transform.right * xOffset;
+        if (useOffset)
+        {
+            if (circleRandomize)
+            {
+                Handles.CircleHandleCap(-1, transform.position, Quaternion.LookRotation(transform.forward), offsetValue, EventType.Repaint);
+            }
+            else
+            {
+                Vector3 rightPos = transform.position + transform.right * offsetValue;
+                Vector3 leftPos = transform.position - transform.right * offsetValue;
 
-        Gizmos.DrawSphere(rightPos, 0.3F);
-        Gizmos.DrawSphere(leftPos, 0.3F);
+                Gizmos.DrawSphere(rightPos, 0.3F);
+                Gizmos.DrawSphere(leftPos, 0.3F);
 
-        if(!clampOffset)
-            Gizmos.DrawLine(rightPos, leftPos);
+                if (!clampOffset)
+                    Gizmos.DrawLine(rightPos, leftPos);
+            }
+
+        }
     }
+#endif
 
-    public virtual void OnUpdate() 
+    public virtual void OnUpdate()
     {
         if (connectPath)
         {
@@ -200,35 +217,93 @@ public class MovingObject : MonoBehaviour
     void RotateTo()
     {
         relDirection = (c_Transform.localPosition - roadPath.GetPoint(currentIndex));
-        if(relDirection != Vector3.zero)
+        if (relDirection != Vector3.zero)
             c_Transform.localRotation = Quaternion.RotateTowards(c_Transform.localRotation, Quaternion.LookRotation(-relDirection), Time.smoothDeltaTime * rotationSpeed);
     }
     void ChangeOffsetPosition()
     {
         if (visualChild)
         {
-            if(!clampOffset)
-                visualChild.position = visualChild.position + visualChild.right * Random.Range(-xOffset, xOffset);
+            if (circleRandomize)
+            {
+                visualChild.localPosition = new Vector3(Mathf.Sin((Mathf.PI / 180) * Random.Range(0, 360)) * offsetValue, Mathf.Cos((Mathf.PI / 180) * Random.Range(0, 360)) * offsetValue, 0);
+            }
             else
             {
-                int rnd = Random.Range(0, 2);
-                if (rnd == 0)
+                if (!clampOffset)
+                    visualChild.position = visualChild.position + visualChild.right * Random.Range(-offsetValue, offsetValue);
+                else
                 {
-                    if(currentOfffset != -xOffset)
+                    int rnd = Random.Range(0, 2);
+                    if (rnd == 0)
                     {
-                        visualChild.position = visualChild.position + visualChild.right * -xOffset;
-                        currentOfffset = -xOffset;
+                        if (currentOfffset != -offsetValue)
+                        {
+                            visualChild.position = visualChild.position + visualChild.right * -offsetValue;
+                            currentOfffset = -offsetValue;
+                        }
                     }
-                }
-                else if(rnd == 1)
-                {
-                    if (currentOfffset != xOffset)
+                    else if (rnd == 1)
                     {
-                        visualChild.position = visualChild.position + visualChild.right * xOffset;
-                        currentOfffset = xOffset;
+                        if (currentOfffset != offsetValue)
+                        {
+                            visualChild.position = visualChild.position + visualChild.right * offsetValue;
+                            currentOfffset = offsetValue;
+                        }
                     }
                 }
             }
+        }
+    }
+}
+[CanEditMultipleObjects, CustomEditor(typeof(MovingObject), true)]
+public class MovingObjectEditor : Editor
+{
+    MovingObject script { get => target as MovingObject; }
+
+    SerializedObject s_script;
+    SerializedProperty s_connectPath;
+
+    private void OnEnable()
+    {
+        s_script = new SerializedObject(script);
+        s_connectPath = s_script.FindProperty("connectPath");
+    }
+    public override void OnInspectorGUI()
+    {
+        s_script.Update();
+        GUI.backgroundColor = Color.cyan;
+        using (new EditorGUILayout.VerticalScope("Box"))
+        {
+            EditorGUILayout.PropertyField(s_connectPath);
+        }
+        s_script.ApplyModifiedProperties();
+
+        EditorGUI.BeginChangeCheck();
+        using (new EditorGUILayout.VerticalScope("Box"))
+        {
+            script.visualChild = (Transform)EditorGUILayout.ObjectField("Visual Child", script.visualChild, typeof(Transform), true);
+            script.movingSpeed = EditorGUILayout.FloatField("Moving Speed", script.movingSpeed);
+            script.rotationSpeed = EditorGUILayout.FloatField("Rotation Speed", script.rotationSpeed);
+            script.reachDistance = EditorGUILayout.FloatField("Reac Distance", script.reachDistance);
+            script.finishingMove = (MovingObject.FinishingMove)EditorGUILayout.EnumPopup("Finishing Move", script.finishingMove);
+        }
+        using (new EditorGUILayout.VerticalScope("Box"))
+        {
+            script.useOffset = EditorGUILayout.Toggle("Use Offset", script.useOffset);
+            script.circleRandomize = EditorGUILayout.Toggle("Circle Randomize", script.circleRandomize);
+            if (script.useOffset)
+            {
+                script.offsetValue = EditorGUILayout.FloatField("Offset Value", script.offsetValue);
+            }
+            if (!script.circleRandomize)
+            {
+                script.clampOffset = EditorGUILayout.Toggle("Clamp Offset", script.clampOffset);
+            }
+        }
+        if (EditorGUI.EndChangeCheck())
+        {
+            EditorUtility.SetDirty(script);
         }
     }
 }
