@@ -11,14 +11,18 @@ public class MovingObject : MonoBehaviour
     public float movingSpeed = 10;
     public float rotationSpeed = 100;
     public float reachDistance = 0.5F;
-    public bool useOffset;
-    public float offsetValue;
-    public bool circleRandomize;
-    public bool clampOffset;
 
     public bool reverseFollow;
 
     public FinishingMove finishingMove;
+    
+    [SerializeField] bool useOffset;
+    [SerializeField] float offsetValue;
+    [SerializeField] bool randomize;
+    [SerializeField] bool circle;
+    [SerializeField] bool clampOffset;
+    [SerializeField] float circleAngle;
+    [SerializeField] float lineerOffsetValue;
 
     public RoadPath roadPath { get; private set; }
 
@@ -73,7 +77,7 @@ public class MovingObject : MonoBehaviour
     {
         if (useOffset)
         {
-            if (circleRandomize)
+            if (circle)
             {
                 Handles.CircleHandleCap(-1, transform.position, Quaternion.LookRotation(transform.forward), offsetValue, EventType.Repaint);
             }
@@ -167,7 +171,8 @@ public class MovingObject : MonoBehaviour
                             c_Transform.position = roadPath.GetPoint(currentIndex);
                             c_Transform.rotation = Quaternion.LookRotation((roadPath.GetPoint(1) - roadPath.GetPoint(0)));
 
-                            ChangeOffsetPosition();
+                            if(useOffset)
+                                ChangeOffsetPosition();
                         }
                     }
                     else if (finishingMove == FinishingMove.Inverse)
@@ -198,7 +203,8 @@ public class MovingObject : MonoBehaviour
                             c_Transform.position = roadPath.GetPoint(currentIndex);
                             c_Transform.rotation = Quaternion.LookRotation((roadPath.GetPoint(roadPath.points.Length - 2) - (roadPath.GetPoint(roadPath.points.Length - 1))));
 
-                            ChangeOffsetPosition();
+                            if (useOffset)
+                                ChangeOffsetPosition();
                         }
                     }
                     else if (finishingMove == FinishingMove.Inverse)
@@ -224,31 +230,34 @@ public class MovingObject : MonoBehaviour
     {
         if (visualChild)
         {
-            if (circleRandomize)
+            if (randomize)
             {
-                visualChild.localPosition = new Vector3(Mathf.Sin((Mathf.PI / 180) * Random.Range(0, 360)) * offsetValue, Mathf.Cos((Mathf.PI / 180) * Random.Range(0, 360)) * offsetValue, 0);
-            }
-            else
-            {
-                if (!clampOffset)
-                    visualChild.position = visualChild.position + visualChild.right * Random.Range(-offsetValue, offsetValue);
+                if (circle)
+                {
+                    visualChild.localPosition = new Vector3(Mathf.Sin((Mathf.PI / 180) * Random.Range(0, 360)) * offsetValue, Mathf.Cos((Mathf.PI / 180) * Random.Range(0, 360)) * offsetValue, 0);
+                }
                 else
                 {
-                    int rnd = Random.Range(0, 2);
-                    if (rnd == 0)
+                    if (!clampOffset)
+                        visualChild.position = visualChild.position + visualChild.right * Random.Range(-offsetValue, offsetValue);
+                    else
                     {
-                        if (currentOfffset != -offsetValue)
+                        int rnd = Random.Range(0, 2);
+                        if (rnd == 0)
                         {
-                            visualChild.position = visualChild.position + visualChild.right * -offsetValue;
-                            currentOfffset = -offsetValue;
+                            if (currentOfffset != -offsetValue)
+                            {
+                                visualChild.position = visualChild.position + visualChild.right * -offsetValue;
+                                currentOfffset = -offsetValue;
+                            }
                         }
-                    }
-                    else if (rnd == 1)
-                    {
-                        if (currentOfffset != offsetValue)
+                        else if (rnd == 1)
                         {
-                            visualChild.position = visualChild.position + visualChild.right * offsetValue;
-                            currentOfffset = offsetValue;
+                            if (currentOfffset != offsetValue)
+                            {
+                                visualChild.position = visualChild.position + visualChild.right * offsetValue;
+                                currentOfffset = offsetValue;
+                            }
                         }
                     }
                 }
@@ -263,11 +272,32 @@ public class MovingObjectEditor : Editor
 
     SerializedObject s_script;
     SerializedProperty s_connectPath;
+    SerializedProperty s_useOffset;
+    SerializedProperty s_randomize;
+    SerializedProperty s_circle;
+    SerializedProperty s_offsetValue;
+    SerializedProperty s_clamp;
+    SerializedProperty s_circleAngle;
+    SerializedProperty s_lineerOffsetValue;
+
+    bool appleOffsetPosition;
 
     private void OnEnable()
     {
         s_script = new SerializedObject(script);
         s_connectPath = s_script.FindProperty("connectPath");
+        s_useOffset = s_script.FindProperty("useOffset");
+        s_randomize = s_script.FindProperty("randomize");
+        s_circle = s_script.FindProperty("circle");
+        s_offsetValue = s_script.FindProperty("offsetValue");
+        s_clamp = s_script.FindProperty("clampOffset");
+        s_circleAngle = s_script.FindProperty("circleAngle");
+        s_lineerOffsetValue = s_script.FindProperty("lineerOffsetValue");
+
+        if (PlayerPrefs.HasKey("applyoffset"))
+        {
+            appleOffsetPosition = PlayerPrefs.GetInt("applyoffset") == 1 ? true : false;
+        }
     }
     public override void OnInspectorGUI()
     {
@@ -277,7 +307,6 @@ public class MovingObjectEditor : Editor
         {
             EditorGUILayout.PropertyField(s_connectPath);
         }
-        s_script.ApplyModifiedProperties();
 
         EditorGUI.BeginChangeCheck();
         using (new EditorGUILayout.VerticalScope("Box"))
@@ -290,20 +319,60 @@ public class MovingObjectEditor : Editor
         }
         using (new EditorGUILayout.VerticalScope("Box"))
         {
-            script.useOffset = EditorGUILayout.Toggle("Use Offset", script.useOffset);
-            script.circleRandomize = EditorGUILayout.Toggle("Circle Randomize", script.circleRandomize);
-            if (script.useOffset)
+            EditorGUILayout.PropertyField(s_useOffset);
+            if (s_useOffset.boolValue)
             {
-                script.offsetValue = EditorGUILayout.FloatField("Offset Value", script.offsetValue);
-            }
-            if (!script.circleRandomize)
-            {
-                script.clampOffset = EditorGUILayout.Toggle("Clamp Offset", script.clampOffset);
+                EditorGUILayout.PropertyField(s_randomize);
+                appleOffsetPosition = EditorGUILayout.Toggle("Apply Offset", appleOffsetPosition);
+                EditorGUILayout.PropertyField(s_circle);
+                EditorGUILayout.PropertyField(s_offsetValue);
+                if (!s_circle.boolValue)
+                {
+                    if (s_randomize.boolValue)
+                    {
+                        EditorGUILayout.PropertyField(s_clamp);
+                    }
+                    else
+                    {
+                        s_lineerOffsetValue.floatValue = EditorGUILayout.Slider("Lineer Offset Value", s_lineerOffsetValue.floatValue, 0, 1);
+                    }
+                }
+                else
+                {
+                    if (!s_randomize.boolValue)
+                    {
+                        s_circleAngle.floatValue = EditorGUILayout.Slider("Circle Angle", s_circleAngle.floatValue, 0, 360);
+                    }
+                }
             }
         }
         if (EditorGUI.EndChangeCheck())
         {
+            PlayerPrefs.SetInt("applyoffset", appleOffsetPosition ? 1 : 0);
+
+            Undo.RecordObject(script.visualChild.transform, "changedOffsetpos");
+            if (appleOffsetPosition)
+            {
+                if (script.visualChild)
+                {
+                    if (s_circle.boolValue)
+                    {
+                        script.visualChild.localPosition = new Vector3(Mathf.Sin((Mathf.PI / 180) * s_circleAngle.floatValue) * s_offsetValue.floatValue, Mathf.Cos((Mathf.PI / 180) * s_circleAngle.floatValue) * s_offsetValue.floatValue, 0);
+                    }
+                    else
+                    {
+                        Vector3 rightPos = script.transform.position + script.transform.right * s_offsetValue.floatValue;
+                        Vector3 leftPos = script.transform.position - script.transform.right * s_offsetValue.floatValue;
+                        script.visualChild.position = Vector3.Lerp(leftPos , rightPos, s_lineerOffsetValue.floatValue);
+                    }
+                }
+            }
+            else
+            {
+                script.visualChild.transform.localPosition = Vector3.zero;
+            }
             EditorUtility.SetDirty(script);
         }
+        s_script.ApplyModifiedProperties();
     }
 }
