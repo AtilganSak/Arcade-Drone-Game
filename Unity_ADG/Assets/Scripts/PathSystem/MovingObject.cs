@@ -311,7 +311,6 @@ public class MovingObjectEditor : Editor
         EditorGUI.BeginChangeCheck();
         using (new EditorGUILayout.VerticalScope("Box"))
         {
-            script.visualChild = (Transform)EditorGUILayout.ObjectField("Visual Child", script.visualChild, typeof(Transform), true);
             script.movingSpeed = EditorGUILayout.FloatField("Moving Speed", script.movingSpeed);
             script.rotationSpeed = EditorGUILayout.FloatField("Rotation Speed", script.rotationSpeed);
             script.reachDistance = EditorGUILayout.FloatField("Reac Distance", script.reachDistance);
@@ -322,6 +321,7 @@ public class MovingObjectEditor : Editor
             EditorGUILayout.PropertyField(s_useOffset);
             if (s_useOffset.boolValue)
             {
+                script.visualChild = (Transform)EditorGUILayout.ObjectField("Visual Child", script.visualChild, typeof(Transform), true);
                 EditorGUILayout.PropertyField(s_randomize);
                 appleOffsetPosition = EditorGUILayout.Toggle("Apply Offset", appleOffsetPosition);
                 EditorGUILayout.PropertyField(s_circle);
@@ -350,28 +350,31 @@ public class MovingObjectEditor : Editor
         {
             PlayerPrefs.SetInt("applyoffset", appleOffsetPosition ? 1 : 0);
 
-            Undo.RecordObject(script.visualChild.transform, "changedOffsetpos");
-            if (appleOffsetPosition)
+            if (script.visualChild != null)
             {
-                if (script.visualChild)
+                Undo.RecordObject(script.visualChild.transform, "changedOffsetpos");
+                if (appleOffsetPosition)
                 {
-                    if (s_circle.boolValue)
+                    if (script.visualChild)
                     {
-                        script.visualChild.localPosition = new Vector3(Mathf.Sin((Mathf.PI / 180) * s_circleAngle.floatValue) * s_offsetValue.floatValue, Mathf.Cos((Mathf.PI / 180) * s_circleAngle.floatValue) * s_offsetValue.floatValue, 0);
-                    }
-                    else
-                    {
-                        Vector3 rightPos = script.transform.position + script.transform.right * s_offsetValue.floatValue;
-                        Vector3 leftPos = script.transform.position - script.transform.right * s_offsetValue.floatValue;
-                        script.visualChild.position = Vector3.Lerp(leftPos , rightPos, s_lineerOffsetValue.floatValue);
+                        if (s_circle.boolValue)
+                        {
+                            script.visualChild.localPosition = new Vector3(Mathf.Sin((Mathf.PI / 180) * s_circleAngle.floatValue) * s_offsetValue.floatValue, Mathf.Cos((Mathf.PI / 180) * s_circleAngle.floatValue) * s_offsetValue.floatValue, 0);
+                        }
+                        else
+                        {
+                            Vector3 rightPos = script.transform.position + script.transform.right * s_offsetValue.floatValue;
+                            Vector3 leftPos = script.transform.position - script.transform.right * s_offsetValue.floatValue;
+                            script.visualChild.position = Vector3.Lerp(leftPos, rightPos, s_lineerOffsetValue.floatValue);
+                        }
                     }
                 }
+                else
+                {
+                    script.visualChild.transform.localPosition = Vector3.zero;
+                }
+                EditorUtility.SetDirty(script);
             }
-            else
-            {
-                script.visualChild.transform.localPosition = Vector3.zero;
-            }
-            EditorUtility.SetDirty(script);
         }
         s_script.ApplyModifiedProperties();
     }

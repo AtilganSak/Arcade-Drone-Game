@@ -36,8 +36,8 @@ public class BatteryModule : MonoBehaviour
     [Tooltip("Per second")]
     public float movingBatteryConsumtion = 5;
 
-    public int lifeForMinute;
-    public int lifeForSecond;
+    int lifeForMinute;
+    int lifeForSecond;
 
     float currentConsumtion;
     float secondCounter;

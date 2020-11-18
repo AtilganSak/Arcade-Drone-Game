@@ -189,19 +189,6 @@ Transform:
   m_Father: {fileID: 9106234672615726441}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &2860563051452983418
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1850312127625968471}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.326082, y: 2.0656035, z: 0.6013914}
-  m_Center: {x: 3.039675e-14, y: -0.00000025498645, z: -0.13898186}
 --- !u!1 &9106234672615817545
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,6 +203,7 @@ GameObject:
   - component: {fileID: 9106234674284666476}
   - component: {fileID: 8385180633513538386}
   - component: {fileID: 4208856275991889579}
+  - component: {fileID: 5419859075411668070}
   m_Layer: 0
   m_Name: Drone_Lowpoly
   m_TagString: Untagged
@@ -344,6 +332,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   money: 0
   saveMoney: 0
+--- !u!65 &5419859075411668070
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9106234672615817545}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.9011544, y: 0.30032253, z: 1.8980249}
+  m_Center: {x: -0.0011861324, y: 0.002096653, z: 0.011119187}
 --- !u!1 &9106234672615817561
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,11 +483,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a50dc1b9d81391041ab6cbed0fe7e255, type: 3}
---- !u!1 &1850312127625968471 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2979027460931309391, guid: a50dc1b9d81391041ab6cbed0fe7e255, type: 3}
-  m_PrefabInstance: {fileID: 3529133956237620248}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1361901003419312621 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2457963868861863413, guid: a50dc1b9d81391041ab6cbed0fe7e255, type: 3}
