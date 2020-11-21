@@ -1,13 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
-    public int money;
+    [SerializeField] int _money;
+    public int money { get => _money; private set => _money = value; }
 
-    public bool saveMoney;
+    [SerializeField] bool _saveMoney;
+    public bool saveMoney { get => _saveMoney; }
+
+    [SerializeField] bool _isAlive;
+    public bool isAlive { get => _isAlive; private set => _isAlive = value; }
+
+    public Action OnDead;
 
     PlayerUI playerUI;
 
@@ -25,6 +30,8 @@ public class Player : MonoBehaviour
         }
 
         UpdateUI();
+
+        isAlive = true;
     }
     public void EarnMoney(int amount)
     {
@@ -34,6 +41,12 @@ public class Player : MonoBehaviour
             PlayerPrefs.SetInt(PLAYER_MONEY, money);
 
         UpdateUI();
+    }
+    public void Dead()
+    {
+        isAlive = false;
+
+        OnDead();
     }
     void UpdateUI()
     {

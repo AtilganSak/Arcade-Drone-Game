@@ -12,15 +12,15 @@ public class OpenAndStartScenesOnEditor
     //public static void StartWithTutorialScene() =>              StartGame("ConstructorScene");
 
     //OPEN SCENES
-    [MenuItem("Tools/Open Scene/Test Scene")]
+    [MenuItem("ATL/Open Scene/Test Scene")]
     public static void OpenTestScene() => OpenScene("Drone Test");
-    [MenuItem("Tools/Open Scene/Demo Test Scene")]
+    [MenuItem("ATL/Open Scene/Demo Test Scene")]
     public static void OpenDemoTestScene() => OpenScene("Demo_Test_Scene");
-    [MenuItem("Tools/Open Scene/Gameplay Test")]
+    [MenuItem("ATL/Open Scene/Gameplay Test")]
     public static void OpenGameplayTestScene() => OpenScene("GamePlayTestScene");
-    [MenuItem("Tools/Open Scene/City")]
+    [MenuItem("ATL/Open Scene/City")]
     public static void OpenCityScene() => OpenScene("City");
-    [MenuItem("Tools/Open Scene/PathTestScene")]
+    [MenuItem("ATL/Open Scene/PathTestScene")]
     public static void OpenPathTestScene() => OpenScene("PathTestScene");
 
     //FUNCTIONS

@@ -204,6 +204,8 @@ GameObject:
   - component: {fileID: 8385180633513538386}
   - component: {fileID: 4208856275991889579}
   - component: {fileID: 5419859075411668070}
+  - component: {fileID: 3077669436387888418}
+  - component: {fileID: 8129835313452814665}
   m_Layer: 0
   m_Name: Drone_Lowpoly
   m_TagString: Untagged
@@ -310,8 +312,6 @@ MonoBehaviour:
   powerOnThreshold: 10
   idleBatteryConsumtion: 0.5
   movingBatteryConsumtion: 0.5
-  lifeForMinute: 0
-  lifeForSecond: 0
   batteryIsOver: 0
   occupancyState: 0
   consumtionState: 0
@@ -330,8 +330,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afc72ffbd7167ca4580d73c7cf82705d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  money: 0
-  saveMoney: 0
+  _money: 0
+  _saveMoney: 0
+  _isAlive: 0
 --- !u!65 &5419859075411668070
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -345,6 +346,49 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.9011544, y: 0.30032253, z: 1.8980249}
   m_Center: {x: -0.0011861324, y: 0.002096653, z: 0.011119187}
+--- !u!114 &3077669436387888418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9106234672615817545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f36a32c2a17e404cb466f12f083c40d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healt: 100
+  OnDead:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4208856275991889579}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: Dead
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8129835313452814665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9106234672615817545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa58757294f26324698d09e9984bc812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healt: {fileID: 3077669436387888418}
+  damageTable: {fileID: 11400000, guid: f13419f4d800a71458a7073979ca9248, type: 2}
+  particleEffect: {fileID: 5614183206435345824, guid: f298365ebb893224ba6e28dee4c030b4, type: 3}
 --- !u!1 &9106234672615817561
 GameObject:
   m_ObjectHideFlags: 0

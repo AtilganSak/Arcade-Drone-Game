@@ -15,7 +15,7 @@ public class MovingObject : MonoBehaviour
     public bool reverseFollow;
 
     public FinishingMove finishingMove;
-    
+
     [SerializeField] bool useOffset;
     [SerializeField] float offsetValue;
     [SerializeField] bool randomize;
@@ -171,7 +171,7 @@ public class MovingObject : MonoBehaviour
                             c_Transform.position = roadPath.GetPoint(currentIndex);
                             c_Transform.rotation = Quaternion.LookRotation((roadPath.GetPoint(1) - roadPath.GetPoint(0)));
 
-                            if(useOffset)
+                            if (useOffset)
                                 ChangeOffsetPosition();
                         }
                     }
@@ -265,6 +265,7 @@ public class MovingObject : MonoBehaviour
         }
     }
 }
+#if UNITY_EDITOR
 [CanEditMultipleObjects, CustomEditor(typeof(MovingObject), true)]
 public class MovingObjectEditor : Editor
 {
@@ -379,3 +380,4 @@ public class MovingObjectEditor : Editor
         s_script.ApplyModifiedProperties();
     }
 }
+#endif

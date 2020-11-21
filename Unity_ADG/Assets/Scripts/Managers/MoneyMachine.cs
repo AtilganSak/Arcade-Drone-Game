@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(menuName = "Money Machine")]
+[CreateAssetMenu(menuName = "ScriptableObjects/Money Machine")]
 public class MoneyMachine : ScriptableObject
 {
     [System.Serializable]

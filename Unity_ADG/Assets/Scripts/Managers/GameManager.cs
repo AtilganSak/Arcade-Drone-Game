@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -12,23 +10,32 @@ public class GameManager : MonoBehaviour
     public GameState gameState { get; private set; }
 
     UIManager uiManager;
-    CargoSystem cargoSystem;
     DroneController drone;
     BatteryModule droneBattery;
     DroneCamera droneCamera;
+    Player player;
+    CameraManager cameraManager;
 
     private void OnEnable()
     {
         uiManager = FindObjectOfType<UIManager>();
-        cargoSystem = FindObjectOfType<CargoSystem>();
-
+        player = FindObjectOfType<Player>();
         drone = FindObjectOfType<DroneController>();
+        cameraManager = FindObjectOfType<CameraManager>();
         if (drone != null)
         {
             droneBattery = drone.GetComponent<BatteryModule>();
             if (droneBattery != null)
                 droneBattery.BatteryIsOverEvent.AddListener(DroneBatteryIsOver);
             droneCamera = FindObjectOfType<DroneCamera>();
+        }
+        if (player != null)
+        {
+            player.OnDead += PlayerIsDead;
+        }
+        if (cameraManager)
+        {
+            cameraManager.AdjustDamageComponent(player.GetComponent<Damage>());
         }
 
         if (!noEntry)
@@ -75,12 +82,18 @@ public class GameManager : MonoBehaviour
 
         DroneControlls(false);
 
+        uiManager.ClearEffects();
+
         StopTime();
 
         uiManager.gameCanvas.ShowEndPanel();
     }
 
     void DroneBatteryIsOver()
+    {
+        FinishGame();
+    }
+    void PlayerIsDead()
     {
         FinishGame();
     }
